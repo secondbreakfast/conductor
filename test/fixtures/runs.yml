@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  flow: one
+  status: MyString
+  started_at: 2025-02-04 22:05:36
+  completed_at: 2025-02-04 22:05:36
+
+two:
+  flow: two
+  status: MyString
+  started_at: 2025-02-04 22:05:36
+  completed_at: 2025-02-04 22:05:36

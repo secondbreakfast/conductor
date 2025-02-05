@@ -1,0 +1,32 @@
+<% content_for :title, "Showing run" %>
+
+<div class="md:w-2/3 w-full">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <h1 class="font-bold text-4xl">Showing run</h1>
+
+  <%= render @run %>
+
+  <div class="mt-6">
+    <h2 class="font-bold text-2xl mb-4">Attachments</h2>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <% @run.attachments.each do |attachment| %>
+        <% if attachment.image? %>
+          <%= link_to rails_blob_path(attachment), target: "_blank" do %>
+            <%= image_tag attachment, class: "w-full object-cover rounded-lg" %>
+          <% end %>
+        <% else %>
+          <%= link_to attachment.filename, rails_blob_path(attachment, disposition: "attachment"), class: "p-4 border rounded-lg block hover:bg-gray-50" %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <%= link_to "Edit this run", edit_run_path(@run), class: "mt-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+  <%= link_to "Back to runs", runs_path, class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+  <div class="inline-block ml-2">
+    <%= button_to "Destroy this run", @run, method: :delete, class: "mt-2 rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium" %>
+  </div>
+</div>
