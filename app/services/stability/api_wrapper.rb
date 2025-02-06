@@ -10,7 +10,7 @@ module Stability
       @api_key = Rails.application.credentials.stability_api_key
     end
 
-    def replace_background_and_relight(image, background_prompt:, preserve_original_subject: 0.7, original_background_depth: 0.25, output_format: "webp")
+    def replace_background_and_relight(image, background_prompt:, preserve_original_subject: 0.8, original_background_depth: 0.65, output_format: "webp")
       # Convert ActiveStorage blob to tempfile
       tempfile = create_tempfile_from_blob(image)
 

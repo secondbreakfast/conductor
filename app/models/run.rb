@@ -11,9 +11,9 @@ class Run < ApplicationRecord
   def perform
     result = Stability::ApiWrapper.new.replace_background_and_relight(
       attachments.first,
-      background_prompt: "commercial food photograph, studio background, well lit",
-      preserve_original_subject: 0.7,
-      original_background_depth: 0.25
+      background_prompt: "commercial food photograph, studio plain background, well lit",
+      preserve_original_subject: 0.8,
+      original_background_depth: 0.65
     )
     attachments.create!(blob: result)
   end
