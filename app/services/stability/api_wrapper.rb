@@ -10,18 +10,39 @@ module Stability
       @api_key = Rails.application.credentials.stability_api_key
     end
 
-    def replace_background_and_relight(image, background_prompt:, preserve_original_subject: 0.8, original_background_depth: 0.65, output_format: "webp")
+    def replace_background_and_relight(
+      image,
+      background_prompt: nil,
+      background_reference: nil,
+      preserve_original_subject: 0.8,
+      original_background_depth: 0.65,
+      output_format: "webp"
+    )
+      # Validate that either background_prompt or background_reference is provided
+      if background_prompt.nil? && background_reference.nil?
+        raise ArgumentError, "Either background_prompt or background_reference must be provided"
+      end
+
       # Convert ActiveStorage blob to tempfile
       tempfile = create_tempfile_from_blob(image)
+      background_tempfile = background_reference ? create_tempfile_from_blob(background_reference) : nil
 
       # Create form data
       payload = {
         subject_image: File.open(tempfile.path),
-        background_prompt: background_prompt,
         output_format: output_format,
         preserve_original_subject: preserve_original_subject,
         original_background_depth: original_background_depth
       }
+
+      # Add either background_prompt or background_reference to payload
+      if background_reference
+        payload[:background_reference] = File.open(background_tempfile.path)
+      else
+        payload[:background_prompt] = background_prompt
+      end
+
+      puts "Payload: #{payload}"
 
       # Initial API call
       response = self.class.post(
@@ -52,6 +73,8 @@ module Stability
     ensure
       tempfile&.close
       tempfile&.unlink
+      background_tempfile&.close
+      background_tempfile&.unlink
     end
 
     private

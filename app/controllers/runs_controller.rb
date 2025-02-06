@@ -65,6 +65,6 @@ class RunsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def run_params
-      params.require(:run).permit(:flow_id, :status, :started_at, :completed_at, attachments: [])
+      params.require(:run).permit(:flow_id, :status, :started_at, :completed_at, :background_reference, attachments: [])
     end
 end
