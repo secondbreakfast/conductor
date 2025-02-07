@@ -23,4 +23,12 @@
     <strong class="block font-medium mb-1">Background reference:</strong>
     <%= image_tag run.background_reference, class: "w-full object-cover rounded-lg" if run.background_reference.attached? %>
   </p>
+  <% if run.prompt_runs.any? %>
+    <div class="mt-6">
+      <h2 class="font-bold text-2xl mb-4">Prompt Runs</h2>
+      <% run.prompt_runs.each do |prompt_run| %>
+        <%= render prompt_run %>
+      <% end %>
+    </div>
+  <% end %>
 </div>

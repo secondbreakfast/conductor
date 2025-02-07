@@ -19,13 +19,13 @@ module Stability
       output_format: "webp"
     )
       # Validate that either background_prompt or background_reference is provided
-      if background_prompt.nil? && background_reference.nil?
+      if background_prompt.blank? && background_reference.blank?
         raise ArgumentError, "Either background_prompt or background_reference must be provided"
       end
 
       # Convert ActiveStorage blob to tempfile
       tempfile = create_tempfile_from_blob(image)
-      background_tempfile = background_reference ? create_tempfile_from_blob(background_reference) : nil
+      background_tempfile = background_reference.present? ? create_tempfile_from_blob(background_reference) : nil
 
       # Create form data
       payload = {
@@ -36,7 +36,7 @@ module Stability
       }
 
       # Add either background_prompt or background_reference to payload
-      if background_reference
+      if background_reference.present?
         payload[:background_reference] = File.open(background_tempfile.path)
       else
         payload[:background_prompt] = background_prompt
