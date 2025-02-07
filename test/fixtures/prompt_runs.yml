@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  prompt: one
+  run: one
+  status: MyString
+
+two:
+  prompt: two
+  run: two
+  status: MyString

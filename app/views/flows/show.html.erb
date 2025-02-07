@@ -20,6 +20,26 @@
   </div>
 
   <div class="mt-8">
+    <h2 class="font-bold text-2xl mb-4">Prompts</h2>
+    <% if @flow.prompts.any? %>
+      <div class="space-y-8">
+        <% @flow.prompts.each do |prompt| %>
+          <div class="bg-white shadow rounded-lg p-6">
+            <%= render prompt %>
+            <div class="mt-4">
+              <%= link_to "View", prompt_path(prompt), class: "rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+              <%= link_to "Edit", edit_prompt_path(prompt), class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+              <%= button_to "Delete", prompt_path(prompt), method: :delete, class: "ml-2 rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium inline-block" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-gray-500">No prompts have been added to this flow yet.</p>
+    <% end %>
+  </div>
+
+  <div class="mt-8">
     <h2 class="font-bold text-2xl mb-4">Add New Prompt</h2>
     <%= render "prompts/form", prompt: Prompt.new(flow: @flow) %>
   </div>

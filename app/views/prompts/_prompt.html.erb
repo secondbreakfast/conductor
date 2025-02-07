@@ -1,7 +1,15 @@
 <div id="<%= dom_id prompt %>">
   <p class="my-5">
+    <strong class="block font-medium mb-1">Subject image:</strong>
+    <%= image_tag prompt.subject_image, class: "w-full" if prompt.subject_image.present? %>
+  </p>
+  <p class="my-5">
     <strong class="block font-medium mb-1">Background prompt:</strong>
     <%= prompt.background_prompt %>
+  </p>
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Background reference:</strong>
+    <%= image_tag prompt.background_reference, class: "w-full" if prompt.background_reference.present? %>
   </p>
   <p class="my-5">
     <strong class="block font-medium mb-1">Light source direction:</strong>
