@@ -1,0 +1,14 @@
+<div class="mt-6">
+  <h2 class="font-bold text-2xl mb-4">Attachments</h2>
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <% prompt_run.attachments.each do |attachment| %>
+      <% if attachment.image? %>
+        <%= link_to rails_blob_path(attachment), target: "_blank" do %>
+          <%= image_tag attachment, class: "w-full object-cover rounded-lg" %>
+        <% end %>
+      <% else %>
+        <%= link_to attachment.filename, rails_blob_path(attachment, disposition: "attachment"), class: "p-4 border rounded-lg block hover:bg-gray-50" %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
