@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_07_030001) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_07_033028) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -47,6 +47,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_07_030001) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "prompt_runs", force: :cascade do |t|
+    t.bigint "prompt_id", null: false
+    t.bigint "run_id", null: false
+    t.string "status"
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["prompt_id"], name: "index_prompt_runs_on_prompt_id"
+    t.index ["run_id"], name: "index_prompt_runs_on_run_id"
   end
 
   create_table "prompts", force: :cascade do |t|
@@ -96,6 +108,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_07_030001) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "prompt_runs", "prompts"
+  add_foreign_key "prompt_runs", "runs"
   add_foreign_key "prompts", "flows"
   add_foreign_key "runs", "flows"
   add_foreign_key "sessions", "users"
