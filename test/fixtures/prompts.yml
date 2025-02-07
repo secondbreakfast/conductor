@@ -1,0 +1,27 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  background_prompt: MyText
+  light_source_direction: MyString
+  light_source_strength: 1.5
+  foreground_prompt: MyText
+  negative_prompt: MyText
+  preserve_original_subject: 1.5
+  original_background_depth: 1.5
+  keep_original_background: false
+  seed: 1.5
+  output_format: MyString
+  flow: one
+
+two:
+  background_prompt: MyText
+  light_source_direction: MyString
+  light_source_strength: 1.5
+  foreground_prompt: MyText
+  negative_prompt: MyText
+  preserve_original_subject: 1.5
+  original_background_depth: 1.5
+  keep_original_background: false
+  seed: 1.5
+  output_format: MyString
+  flow: two

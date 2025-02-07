@@ -1,0 +1,72 @@
+<%= form_with(model: prompt, class: "contents") do |form| %>
+  <% if prompt.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
+      <h2><%= pluralize(prompt.errors.count, "error") %> prohibited this prompt from being saved:</h2>
+
+      <ul class="list-disc ml-6">
+        <% prompt.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="my-5">
+    <%= form.label :background_prompt %>
+    <%= form.textarea :background_prompt, rows: 4, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": prompt.errors[:background_prompt].none?, "border-red-400 focus:outline-red-600": prompt.errors[:background_prompt].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :light_source_direction %>
+    <%= form.text_field :light_source_direction, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": prompt.errors[:light_source_direction].none?, "border-red-400 focus:outline-red-600": prompt.errors[:light_source_direction].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :light_source_strength %>
+    <%= form.text_field :light_source_strength, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": prompt.errors[:light_source_strength].none?, "border-red-400 focus:outline-red-600": prompt.errors[:light_source_strength].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :foreground_prompt %>
+    <%= form.textarea :foreground_prompt, rows: 4, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": prompt.errors[:foreground_prompt].none?, "border-red-400 focus:outline-red-600": prompt.errors[:foreground_prompt].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :negative_prompt %>
+    <%= form.textarea :negative_prompt, rows: 4, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": prompt.errors[:negative_prompt].none?, "border-red-400 focus:outline-red-600": prompt.errors[:negative_prompt].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :preserve_original_subject %>
+    <%= form.text_field :preserve_original_subject, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": prompt.errors[:preserve_original_subject].none?, "border-red-400 focus:outline-red-600": prompt.errors[:preserve_original_subject].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :original_background_depth %>
+    <%= form.text_field :original_background_depth, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": prompt.errors[:original_background_depth].none?, "border-red-400 focus:outline-red-600": prompt.errors[:original_background_depth].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :keep_original_background %>
+    <%= form.checkbox :keep_original_background, class: ["block shadow-sm rounded-md border outline-hidden mt-2 h-5 w-5", {"border-gray-400 focus:outline-blue-600": prompt.errors[:keep_original_background].none?, "border-red-400 focus:outline-red-600": prompt.errors[:keep_original_background].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :seed %>
+    <%= form.text_field :seed, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": prompt.errors[:seed].none?, "border-red-400 focus:outline-red-600": prompt.errors[:seed].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :output_format %>
+    <%= form.text_field :output_format, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": prompt.errors[:output_format].none?, "border-red-400 focus:outline-red-600": prompt.errors[:output_format].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :flow_id %>
+    <%= form.text_field :flow_id, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": prompt.errors[:flow_id].none?, "border-red-400 focus:outline-red-600": prompt.errors[:flow_id].any?}] %>
+  </div>
+
+  <div class="inline">
+    <%= form.submit class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  </div>
+<% end %>
