@@ -9,6 +9,10 @@ fi
 # If running the rails server then create or migrate existing database
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
   ./bin/rails db:prepare
+fi
+
+# If running the queue process, ensure queue migrations are run
+if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "solid_queue:start" ]; then
   ./bin/rails db:migrate:queue
 fi
 
