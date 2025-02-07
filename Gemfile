@@ -66,3 +66,5 @@ group :test do
 end
 
 gem 'httparty'
+
+gem "google-cloud-storage"
