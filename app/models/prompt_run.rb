@@ -12,9 +12,9 @@ class PromptRun < ApplicationRecord
 
   def perform
     result = Stability::ApiWrapper.new.replace_background_and_relight(
-      prompt.subject_image,
+      (run.subject_image || prompt.subject_image),
       background_prompt: prompt.background_prompt,
-      background_reference: prompt.background_reference,
+      background_reference: (run.background_reference || prompt.background_reference),
       preserve_original_subject: prompt.preserve_original_subject,
       original_background_depth: prompt.original_background_depth
     )

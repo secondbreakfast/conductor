@@ -40,8 +40,8 @@
   </div>
 
   <div class="my-5">
-    <%= form.label :attachments %>
-    <%= form.file_field :attachments, multiple: true, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": run.errors[:attachments].none?, "border-red-400 focus:outline-red-600": run.errors[:attachments].any?}] %>
+    <%= form.label :subject_image %>
+    <%= form.file_field :subject_image, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": run.errors[:subject_image].none?, "border-red-400 focus:outline-red-600": run.errors[:subject_image].any?}] %>
   </div>
 
   <div class="my-5">
