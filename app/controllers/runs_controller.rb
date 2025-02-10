@@ -1,5 +1,4 @@
 class RunsController < ApplicationController
-  before_action :set_cors_headers
   allow_unauthenticated_access only: %i[ create show ]
   before_action :set_run, only: %i[ show edit update destroy ]
 
@@ -25,14 +24,15 @@ class RunsController < ApplicationController
   def create
     @run = Run.new(run_params)
 
+
     respond_to do |format|
-      if @run.save
+        # if @run.save
         format.html { redirect_to @run, notice: "Run was successfully created." }
         format.json { render :show, status: :created, location: @run }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @run.errors, status: :unprocessable_entity }
-      end
+      # else
+      # format.html { render :new, status: :unprocessable_entity }
+      # format.json { render json: @run.errors, status: :unprocessable_entity }
+      # end
     end
   end
 
@@ -60,11 +60,6 @@ class RunsController < ApplicationController
   end
 
   private
-    def set_cors_headers
-      headers["Access-Control-Allow-Origin"] = "*"
-      headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
-      headers["Access-Control-Allow-Headers"] = "Origin, Content-Type, Accept, Authorization, Token"
-    end
 
     # Use callbacks to share common setup or constraints between actions.
     def set_run
