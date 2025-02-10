@@ -27,13 +27,13 @@ class RunsController < ApplicationController
 
 
     respond_to do |format|
-        # if @run.save
+      if @run.save
         format.html { redirect_to @run, notice: "Run was successfully created." }
         format.json { render :show, status: :created, location: @run }
-      # else
-      # format.html { render :new, status: :unprocessable_entity }
-      # format.json { render json: @run.errors, status: :unprocessable_entity }
-      # end
+      else
+        format.html { render :new, status: :unprocessable_entity }
+        format.json { render json: @run.errors, status: :unprocessable_entity }
+      end
     end
   end
 
