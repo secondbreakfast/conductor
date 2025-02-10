@@ -68,3 +68,5 @@ end
 gem 'httparty'
 
 gem "google-cloud-storage"
+
+gem "rack-cors"
