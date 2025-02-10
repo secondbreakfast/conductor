@@ -12,4 +12,10 @@ class Run < ApplicationRecord
       PromptRun.create!(prompt: prompt, run: self)
     end
   end
+
+  # helpers
+
+  def data
+    prompt_runs.map(&:data).reduce({}, :merge)
+  end
 end

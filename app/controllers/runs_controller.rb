@@ -1,4 +1,6 @@
 class RunsController < ApplicationController
+  before_action :set_cors_headers
+  allow_unauthenticated_access only: %i[ create show ]
   before_action :set_run, only: %i[ show edit update destroy ]
 
   # GET /runs or /runs.json
@@ -58,6 +60,12 @@ class RunsController < ApplicationController
   end
 
   private
+    def set_cors_headers
+      headers["Access-Control-Allow-Origin"] = "*"
+      headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+      headers["Access-Control-Allow-Headers"] = "Origin, Content-Type, Accept, Authorization, Token"
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_run
       @run = Run.find(params.expect(:id))

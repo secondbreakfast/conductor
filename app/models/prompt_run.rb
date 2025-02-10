@@ -40,4 +40,10 @@ class PromptRun < ApplicationRecord
       nil
     end
   end
+
+  def data
+    {
+      image_url: attachments.first.present? ? Rails.application.routes.url_helpers.rails_blob_url(attachments.first, host: "http://localhost:3000") : nil
+    }
+  end
 end
