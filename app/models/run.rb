@@ -5,7 +5,7 @@ class Run < ApplicationRecord
   has_one_attached :subject_image
   has_one_attached :background_reference
 
-  # after_create :attach_input_image, if: :input_image_url?
+  after_create :attach_input_image!, if: :input_image_url?
   after_create :perform!
 
   def perform!
@@ -20,7 +20,7 @@ class Run < ApplicationRecord
     prompt_runs.map(&:data).reduce({}, :merge)
   end
 
-  def attach_input_image
+  def attach_input_image!
     return unless input_image_url.present?
 
     require "open-uri"
