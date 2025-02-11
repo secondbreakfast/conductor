@@ -18,7 +18,30 @@ class PromptRun < ApplicationRecord
       preserve_original_subject: prompt.preserve_original_subject,
       original_background_depth: prompt.original_background_depth
     )
-    attachments.create!(blob: result)
+    update!(
+      response: {
+        body: result.parsed_response,
+        status: result.code,
+        error: result.success? ? nil : result.body
+      }
+    )
+    if result.success?
+      PollRunJob.set(wait: 5.seconds).perform_later(self)
+    else
+      update!(status: "failed")
+    end
+  end
+
+  def poll
+    result = Stability::ApiWrapper.new.get_generation(response.dig("body", "id"))
+    if result.present?
+      attachments.create!(blob: result)
+      update!(status: "completed")
+    elsif created_at < 10.minutes.ago
+      update!(status: "timed-out")
+    else
+      PollRunJob.set(wait: 5.seconds).perform_later(self)
+    end
   end
 
   def subject_image

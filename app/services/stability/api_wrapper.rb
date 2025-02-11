@@ -51,30 +51,26 @@ module Stability
         multipart: true,
         body: payload
       )
-
-      raise ApiError, response.body unless response.success?
-
-      generation_id = response["id"]
-
-      # Poll for results
-      start_time = Time.current
-      loop do
-        puts "Polling results for generation ID: #{generation_id}"
-        result = poll_result(generation_id)
-        puts "Poll response status: #{result.code}"
-
-        return process_result(result) unless result.code == 202
-
-        raise TimeoutError if Time.current - start_time > TIMEOUT
-
-        puts "Waiting #{POLLING_INTERVAL} seconds before next poll..."
-        sleep POLLING_INTERVAL
-      end
+      puts "Response: #{response}"
+      response
     ensure
       tempfile&.close
       tempfile&.unlink
       background_tempfile&.close
       background_tempfile&.unlink
+    end
+
+    def get_generation(generation_id)
+      puts "Polling results for generation ID: #{generation_id}"
+      result = poll(generation_id)
+      puts "Poll response status: #{result.code}"
+      if result.code == 200
+        process_result(result)
+      end
+    end
+
+    def poll(generation_id)
+      poll_result(generation_id)
     end
 
     private
