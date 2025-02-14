@@ -4,6 +4,7 @@ class Run < ApplicationRecord
 
   has_one_attached :subject_image
   has_one_attached :background_reference
+  has_one_attached :subject_video
 
   before_create :assign_status, if: :status.blank?
 

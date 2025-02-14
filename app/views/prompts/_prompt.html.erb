@@ -1,5 +1,9 @@
 <div id="<%= dom_id prompt %>">
   <p class="my-5">
+    <strong class="block font-medium mb-1">Action:</strong>
+    <%= prompt.action %>
+  </p>
+  <p class="my-5">
     <strong class="block font-medium mb-1">Subject image:</strong>
     <%= image_tag prompt.subject_image, class: "w-full" if prompt.subject_image.present? %>
   </p>
