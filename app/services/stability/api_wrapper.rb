@@ -73,6 +73,38 @@ module Stability
       poll_result(generation_id)
     end
 
+    def image_to_video(
+      image,
+      seed: 0,
+      cfg_scale: 1.8,
+      motion_bucket_id: 127
+    )
+      # Convert ActiveStorage blob to tempfile
+      tempfile = create_tempfile_from_blob(image)
+
+      # Create form data
+      payload = {
+        image: File.open(tempfile.path),
+        seed: seed,
+        cfg_scale: cfg_scale,
+        motion_bucket_id: motion_bucket_id
+      }
+
+      # Initial API call
+      response = self.class.post(
+        "/stable-video/image-to-video",
+        headers: auth_headers,
+        multipart: true,
+        body: payload
+      )
+
+      puts "Response: #{response}"
+      response
+    ensure
+      tempfile&.close
+      tempfile&.unlink
+    end
+
     private
 
     def create_tempfile_from_blob(blob)

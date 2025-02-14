@@ -28,7 +28,7 @@ class PromptRun < ApplicationRecord
     if result.success?
       PollRunJob.set(wait: 5.seconds).perform_later(self)
     else
-      update!(status: "failed")
+      update_with_status!("failed")
     end
   end
 
@@ -36,12 +36,20 @@ class PromptRun < ApplicationRecord
     result = Stability::ApiWrapper.new.get_generation(response.dig("body", "id"))
     if result.present?
       attachments.create!(blob: result)
-      update!(status: "completed")
+      puts "Attachments created"
+      puts "Status is: #{status}"
+      update_with_status!("completed")
+      puts "Status is now: #{status}"
     elsif created_at < 10.minutes.ago
-      update!(status: "timed-out")
+      update_with_status!("timed-out")
     else
       PollRunJob.set(wait: 5.seconds).perform_later(self)
     end
+  end
+
+  def update_with_status!(status)
+    update!(status: status)
+    run.update!(status: status)
   end
 
   def subject_image

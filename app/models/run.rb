@@ -5,6 +5,8 @@ class Run < ApplicationRecord
   has_one_attached :subject_image
   has_one_attached :background_reference
 
+  before_create :assign_status, if: :status.blank?
+
   after_create :attach_input_image!, if: :input_image_url?
   after_create :perform!
 
@@ -12,6 +14,10 @@ class Run < ApplicationRecord
     flow.prompts.each do |prompt|
       PromptRun.create!(prompt: prompt, run: self)
     end
+  end
+
+  def assign_status
+    self.status = "pending"
   end
 
   # helpers
