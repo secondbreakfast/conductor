@@ -23,8 +23,13 @@ module Stability
         raise ArgumentError, "Either background_prompt or background_reference must be provided"
       end
 
-      # Convert ActiveStorage blob to tempfile
-      tempfile = create_tempfile_from_blob(image)
+      # Process and convert ActiveStorage blob to tempfile
+      processed_image = image.variant(resize_to_fill: [ 768, 768 ], format: :png).processed
+      random_suffix = SecureRandom.hex(8)
+      tempfile = Tempfile.new([ "processed-#{random_suffix}", ".png" ])
+      tempfile.binmode
+      processed_image.download { |chunk| tempfile.write(chunk) }
+      tempfile.rewind
       background_tempfile = background_reference.present? ? create_tempfile_from_blob(background_reference) : nil
 
       # Create form data
@@ -76,11 +81,15 @@ module Stability
     def image_to_video(
       image,
       seed: 0,
-      cfg_scale: 1.8,
-      motion_bucket_id: 127
+      cfg_scale: 8.0,
+      motion_bucket_id: 200
     )
-      # Convert ActiveStorage blob to tempfile
-      tempfile = create_tempfile_from_blob(image)
+      # Process and convert ActiveStorage blob to tempfile
+      processed_image = image.variant(resize_to_fill: [ 768, 768 ], format: :png).processed
+      tempfile = Tempfile.new([ "processed", ".png" ])
+      tempfile.binmode
+      processed_image.download { |chunk| tempfile.write(chunk) }
+      tempfile.rewind
 
       # Create form data
       payload = {
@@ -92,7 +101,7 @@ module Stability
 
       # Initial API call
       response = self.class.post(
-        "/stable-video/image-to-video",
+        "/image-to-video",
         headers: auth_headers,
         multipart: true,
         body: payload
@@ -138,17 +147,26 @@ module Stability
 
       # Get the seed from headers for filename
       seed = response.headers["seed"]
-
-      # Generate a random filename with seed
       random_suffix = SecureRandom.hex(8)
-      filename = "stability_output_#{seed}_#{random_suffix}.webp"
+
+      # Determine content type and file extension from response headers
+      content_type = response.headers["content-type"]
+      extension = case content_type
+      when "video/mp4"
+                    "mp4"
+      when "image/webp"
+                    "webp"
+      else
+                    raise ApiError, "Unexpected content type: #{content_type}"
+      end
+
+      filename = "stability_output_#{seed}_#{random_suffix}.#{extension}"
 
       # Create a blob directly from the response content
-      # run.attachments.create!(blob: result)
       ActiveStorage::Blob.create_and_upload!(
         io: StringIO.new(response.body),
         filename: filename,
-        content_type: "image/webp"
+        content_type: content_type
       )
     end
   end

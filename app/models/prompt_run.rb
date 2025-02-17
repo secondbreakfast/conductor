@@ -11,13 +11,19 @@ class PromptRun < ApplicationRecord
   end
 
   def perform
-    result = Stability::ApiWrapper.new.replace_background_and_relight(
-      subject_image,
-      background_prompt: prompt.background_prompt,
-      background_reference: background_reference,
-      preserve_original_subject: prompt.preserve_original_subject,
-      original_background_depth: prompt.original_background_depth
-    )
+    if prompt.action == "replace_background_and_relight"
+      result = Stability::ApiWrapper.new.replace_background_and_relight(
+        subject_image,
+        background_prompt: prompt.background_prompt,
+        background_reference: background_reference,
+        preserve_original_subject: prompt.preserve_original_subject,
+        original_background_depth: prompt.original_background_depth
+      )
+    elsif prompt.action == "image_to_video"
+      result = Stability::ApiWrapper.new.image_to_video(
+        subject_image
+      )
+    end
     update!(
       response: {
         body: result.parsed_response,
@@ -73,8 +79,14 @@ class PromptRun < ApplicationRecord
   end
 
   def data
-    {
-      image_url: attachments.first.present? ? Rails.application.routes.url_helpers.rails_blob_url(attachments.first, host: "https://conductor-production-662c.up.railway.app") : nil
-    }
+    if prompt.action == "image_to_video"
+      {
+        video_url: attachments.first.present? ? Rails.application.routes.url_helpers.rails_blob_url(attachments.first, host: "https://conductor-production-662c.up.railway.app") : nil
+      }
+    else
+      {
+        image_url: attachments.first.present? ? Rails.application.routes.url_helpers.rails_blob_url(attachments.first, host: "https://conductor-production-662c.up.railway.app") : nil
+      }
+    end
   end
 end

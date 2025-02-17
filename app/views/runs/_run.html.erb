@@ -20,6 +20,10 @@
     <%= image_tag run.subject_image, class: "w-full object-cover rounded-lg" if run.subject_image.attached? %>
   </p>
   <p class="my-5">
+    <strong class="block font-medium mb-1">Subject video:</strong>
+    <%= video_tag run.subject_video, class: "w-full object-cover rounded-lg" if run.subject_video.attached? %>
+  </p>
+  <p class="my-5">
     <strong class="block font-medium mb-1">Background reference:</strong>
     <%= image_tag run.background_reference, class: "w-full object-cover rounded-lg" if run.background_reference.attached? %>
   </p>

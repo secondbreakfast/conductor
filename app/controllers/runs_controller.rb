@@ -69,7 +69,7 @@ class RunsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def run_params
-      params.require(:run).permit(:flow_id, :status, :started_at, :completed_at, :subject_image, :background_reference, :input_image_url, attachments: [])
+      params.require(:run).permit(:flow_id, :status, :started_at, :completed_at, :subject_image, :subject_video, :background_reference, :input_image_url, attachments: [])
     end
 
     def json_request?

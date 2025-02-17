@@ -50,6 +50,11 @@
   </div>
 
   <div class="my-5">
+    <%= form.label :subject_video %>
+    <%= form.file_field :subject_video, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": run.errors[:subject_video].none?, "border-red-400 focus:outline-red-600": run.errors[:subject_video].any?}] %>
+  </div>
+
+  <div class="my-5">
     <%= form.label :background_reference %>
     <%= form.file_field :background_reference, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": run.errors[:background_reference].none?, "border-red-400 focus:outline-red-600": run.errors[:background_reference].any?}] %>
   </div>
