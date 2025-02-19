@@ -11,6 +11,7 @@ class PromptRun < ApplicationRecord
   end
 
   def perform
+    result = nil
     if prompt.action == "replace_background_and_relight"
       result = Stability::ApiWrapper.new.replace_background_and_relight(
         subject_image,
@@ -56,6 +57,7 @@ class PromptRun < ApplicationRecord
   def update_with_status!(status)
     update!(status: status)
     run.update!(status: status)
+    run.update!(completed_at: Time.current) if status == "completed"
     RunWebhookJob.perform_later(run)
   end
 

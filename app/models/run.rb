@@ -20,6 +20,7 @@ class Run < ApplicationRecord
   end
 
   def perform!
+    update!(started_at: Time.current)
     flow.prompts.each do |prompt|
       PromptRun.create!(prompt: prompt, run: self)
     end
