@@ -57,7 +57,7 @@ class RunWebhook < ApplicationRecord
       type: event_type,
       data: {
         object: JSON.parse(ApplicationController.renderer.render(
-          template: "runs/run",
+          template: "runs/_run",
           formats: [ :json ],
           locals: { run: run }
         ))
