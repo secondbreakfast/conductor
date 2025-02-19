@@ -56,6 +56,7 @@ class PromptRun < ApplicationRecord
   def update_with_status!(status)
     update!(status: status)
     run.update!(status: status)
+    run.trigger_webhook!
   end
 
   def subject_image
