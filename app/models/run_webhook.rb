@@ -10,8 +10,6 @@ class RunWebhook < ApplicationRecord
   before_validation :set_attempt_count
   after_create :deliver_webhook
 
-  private
-
   def set_endpoint_url
     self.endpoint_url ||= run&.webhook_url
   end
@@ -22,12 +20,6 @@ class RunWebhook < ApplicationRecord
 
   def deliver_webhook
     return if endpoint_url.blank?
-
-    payload = {
-      type: event_type,
-      data: run.data,
-      created: Time.current.to_i
-    }
 
     begin
       response = HTTParty.post(
@@ -58,5 +50,19 @@ class RunWebhook < ApplicationRecord
         error_message: e.message
       )
     end
+  end
+
+  def payload
+    {
+      type: event_type,
+      data: {
+        object: JSON.parse(ApplicationController.renderer.render(
+          template: "runs/run",
+          formats: [ :json ],
+          locals: { run: run }
+        ))
+      },
+      created: Time.current.to_i
+    }
   end
 end
