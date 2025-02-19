@@ -25,13 +25,15 @@ class PromptRun < ApplicationRecord
         subject_image
       )
     end
-    update!(
-      response: {
-        body: result.parsed_response,
-        status: result.code,
-        error: result.success? ? nil : result.body
-      }
-    )
+    if result.present?
+      update!(
+        response: {
+          body: result.parsed_response,
+          status: result.code,
+          error: result.success? ? nil : result.body
+        }
+      )
+    end
     if result.success?
       PollRunJob.set(wait: 5.seconds).perform_later(self)
     else
