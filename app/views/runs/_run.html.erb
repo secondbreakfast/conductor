@@ -1,38 +1,74 @@
-<div id="<%= dom_id run %>">
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Flow:</strong>
-    <%= run.flow_id %>
-  </p>
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Status:</strong>
-    <%= run.status %>
-  </p>
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Started at:</strong>
-    <%= run.started_at %>
-  </p>
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Completed at:</strong>
-    <%= run.completed_at %>
-  </p>
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Subject image:</strong>
-    <%= image_tag run.subject_image, class: "w-full object-cover rounded-lg" if run.subject_image.attached? %>
-  </p>
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Subject video:</strong>
-    <%= video_tag run.subject_video, class: "w-full object-cover rounded-lg" if run.subject_video.attached? %>
-  </p>
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Background reference:</strong>
-    <%= image_tag run.background_reference, class: "w-full object-cover rounded-lg" if run.background_reference.attached? %>
-  </p>
-  <% if run.prompt_runs.any? %>
-    <div class="mt-6">
-      <h2 class="font-bold text-2xl mb-4">Prompt Runs</h2>
-      <% run.prompt_runs.each do |prompt_run| %>
-        <%= render prompt_run %>
-      <% end %>
-    </div>
-  <% end %>
+<div id="<%= dom_id run %> class="container mx-auto p-6">
+  <h1 class="text-3xl font-bold mb-6">Prompt Run Details</h1>
+  
+  <div class="rounded-xl border bg-card text-card-foreground shadow p-6 mb-6">
+    <dl class="divide-y divide-gray-200">
+      <div class="flex justify-between py-3">
+        <dt class="font-medium text-gray-600">Run ID</dt>
+        <dd class="text-gray-900"><%= link_to run.id, run_path(run) %></dd>
+      </div>
+      <div class="flex justify-between py-3">
+        <dt class="font-medium text-gray-600">Flow</dt>
+        <dd class="text-gray-900"><%= link_to run.flow.name, flow_path(run.flow) %></dd>
+      </div>
+      <div class="flex justify-between py-3">
+        <dt class="font-medium text-gray-600">Time Ran</dt>
+        <dd class="text-gray-900"><%= run.started_at %></dd>
+      </div>
+      <div class="flex justify-between py-3">
+        <dt class="font-medium text-gray-600">Run Time</dt>
+        <dd class="text-gray-900">
+          <% if run.completed_at %>
+            <% seconds = (run.completed_at - run.started_at).to_i %>
+            <%= "%d:%02d:%02d" % [seconds / 3600, (seconds % 3600) / 60, seconds % 60] %>
+          <% end %>
+        </dd>
+      </div>
+      <div class="flex justify-between py-3">
+        <dt class="font-medium text-gray-600">Cost</dt>
+        <dd class="text-gray-900">$0.08</dd>
+      </div>
+      <div class="flex justify-between py-3">
+        <dt class="font-medium text-gray-600">Status</dt>
+        <dd class="text-green-600 font-medium"><%= run.status %></dd>
+      </div>
+    </dl>
+  </div>
+  
+  <div class="grid md:grid-cols-2 gap-6">
+      <div class="rounded-xl border bg-card text-card-foreground shadow p-6">
+          <h2 class="text-xl font-semibold mb-4">Input</h2>
+          <div class="space-y-4">
+              <% if run.subject_image.attached? %>
+                <%= image_tag run.subject_image, class: "w-full object-cover rounded-lg" %>
+              <% else %>
+                <p class="text-sm text-muted-foreground">No input image attached</p>
+              <% end %>
+              <div class="flex items-center space-x-2 mt-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground h-5 w-5 flex-shrink-0"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span class="text-sm text-muted-foreground truncate"><%= link_to run.subject_image.filename, rails_blob_path(run.subject_image, disposition: 'attachment') %></span>
+              </div>
+          </div>
+      </div>
+      <div class="rounded-xl border bg-card text-card-foreground shadow p-6">
+          <h2 class="text-xl font-semibold mb-4">Output</h2>
+          <div class="space-y-4">
+              <% run.output_attachments.each do |attachment| %>
+                <% if attachment.content_type.start_with?('image/') %>
+                  <%= link_to rails_blob_path(attachment, disposition: 'attachment'), target: "_blank" do %>
+                    <%= image_tag attachment, class: "w-full object-cover rounded-lg" %>
+                  <% end %>
+                <% elsif attachment.content_type.start_with?('video/') %>
+                  <video controls class="w-full rounded-lg">
+                    <source src="<%= rails_blob_path(attachment) %>" type="<%= attachment.content_type %>">
+                  </video>
+                <% end %>
+                <div class="flex items-center space-x-2 mt-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground h-5 w-5 flex-shrink-0"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span class="text-sm text-muted-foreground truncate"><%= link_to attachment.filename, rails_blob_path(attachment, disposition: 'attachment') %></span>
+                </div>
+              <% end %>
+          </div>
+      </div>
+  </div>
 </div>

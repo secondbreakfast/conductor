@@ -35,6 +35,10 @@ class Run < ApplicationRecord
     prompt_runs.map(&:data).reduce({}, :merge)
   end
 
+  def output_attachments
+    prompt_runs.map(&:attachments).flatten
+  end
+
   def attach_input_image!
     return unless input_image_url.present?
 

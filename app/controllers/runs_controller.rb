@@ -5,7 +5,13 @@ class RunsController < ApplicationController
 
   # GET /runs or /runs.json
   def index
-    @runs = Run.all
+    per_page = 5  # Adjust this number based on your needs
+    @runs = Run.order(created_at: :desc)
+              .limit(per_page + 1)
+              .where("created_at < ?", params[:after] || Time.current)
+
+    @has_more = @runs.size > per_page
+    @runs = @runs.first(per_page) if @has_more
   end
 
   # GET /runs/1 or /runs/1.json

@@ -1,15 +1,27 @@
 <tr id="<%= dom_id run %>" class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted h-[148px]">
   <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">
-    <span class="truncate max-w-[100px] inline-block"><%= run.id %></span>
+    <%= link_to run_path(run) do %>
+      <span class="truncate max-w-[100px] inline-block"><%= run.id %></span>
+    <% end %>
   </td>
-  <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0"><%= run.flow.name %></td>
-  <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0"><%= run.created_at %></td>
   <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">
-    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium <%= case run.status
-      when 'pending' then 'bg-yellow-100 text-yellow-800'
-      when 'completed' then 'bg-green-100 text-green-800'
-      when 'failed', 'timed-out' then 'bg-red-100 text-red-800'
-      end %>"><%= run.status %></span>
+    <%= link_to flow_path(run.flow) do %>
+      <%= run.flow.name %>
+    <% end %>
+  </td>
+  <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+    <%= link_to run_path(run) do %>
+      <%= run.created_at %>
+    <% end %>
+  </td>
+  <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+    <%= link_to run_path(run) do %>
+      <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium <%= case run.status
+        when 'pending' then 'bg-yellow-100 text-yellow-800'
+        when 'completed' then 'bg-green-100 text-green-800'
+        when 'failed', 'timed-out' then 'bg-red-100 text-red-800'
+        end %>"><%= run.status %></span>
+    <% end %>
   </td>
   <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">
     <div class="mt-2">
@@ -23,8 +35,18 @@
     </div>
   </td>
   <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">
-    <div class="mt-2">
-      <span class="inline-block bg-muted rounded-md px-2 py-1 text-xs"></span>
+    <div class="mt-2 flex gap-2">
+      <% run.output_attachments.each do |attachment| %>
+        <% if attachment.content_type.start_with?('image/') %>
+          <%= link_to rails_blob_path(attachment, disposition: 'attachment'), target: "_blank" do %>
+            <%= image_tag attachment, class: "max-h-[100px] w-auto rounded-md" %>
+          <% end %>
+        <% elsif attachment.content_type.start_with?('video/') %>
+          <video controls class="max-h-[100px] w-auto rounded-md">
+            <source src="<%= rails_blob_path(attachment) %>" type="<%= attachment.content_type %>">
+          </video>
+        <% end %>
+      <% end %>
     </div>
   </td>
 </tr>

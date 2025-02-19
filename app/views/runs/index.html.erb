@@ -10,7 +10,7 @@
     <%= link_to "New run", new_run_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
   </div>
 
-  <div id="runs" class="min-w-full">
+  <div class="min-w-full">
     <% if @runs.any? %>
       <table class="w-full">
         <thead>
@@ -23,12 +23,17 @@
             <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">Output</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="runs">
           <% @runs.each do |run| %>
             <%= render "runs/run_row", run: run %>
           <% end %>
         </tbody>
       </table>
+      <% if @has_more %>
+        <div class="flex justify-center mt-4">
+          <%= link_to "Load more", runs_path(after: @runs.last.created_at), class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
+        </div>
+      <% end %>
     <% else %>
       <p class="text-center my-10">No runs found.</p>
     <% end %>
