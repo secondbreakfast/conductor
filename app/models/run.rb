@@ -11,6 +11,14 @@ class Run < ApplicationRecord
   after_create :attach_input_image!, if: :input_image_url?
   after_create :perform!
 
+  # actions
+
+  def trigger_webhook!
+    if webhook_url.present?
+      RunWebhook.create!(run: self, event_type: "run.#{status}")
+    end
+  end
+
   def perform!
     flow.prompts.each do |prompt|
       PromptRun.create!(prompt: prompt, run: self)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_14_221810) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_19_134740) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -81,6 +81,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_14_221810) do
     t.index ["flow_id"], name: "index_prompts_on_flow_id"
   end
 
+  create_table "run_webhooks", force: :cascade do |t|
+    t.bigint "run_id", null: false
+    t.string "event_type"
+    t.jsonb "payload"
+    t.string "status"
+    t.integer "attempt_count"
+    t.datetime "last_attempted_at"
+    t.text "error_message"
+    t.string "endpoint_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["run_id"], name: "index_run_webhooks_on_run_id"
+  end
+
   create_table "runs", force: :cascade do |t|
     t.bigint "flow_id", null: false
     t.string "status"
@@ -89,6 +103,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_14_221810) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "input_image_url"
+    t.string "webhook_url"
     t.index ["flow_id"], name: "index_runs_on_flow_id"
   end
 
@@ -235,6 +250,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_14_221810) do
   add_foreign_key "prompt_runs", "prompts"
   add_foreign_key "prompt_runs", "runs"
   add_foreign_key "prompts", "flows"
+  add_foreign_key "run_webhooks", "runs"
   add_foreign_key "runs", "flows"
   add_foreign_key "sessions", "users"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
