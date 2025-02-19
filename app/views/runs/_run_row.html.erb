@@ -1,0 +1,30 @@
+<tr id="<%= dom_id run %>" class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted h-[148px]">
+  <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+    <span class="truncate max-w-[100px] inline-block"><%= run.id %></span>
+  </td>
+  <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0"><%= run.flow.name %></td>
+  <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0"><%= run.created_at %></td>
+  <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium <%= case run.status
+      when 'pending' then 'bg-yellow-100 text-yellow-800'
+      when 'completed' then 'bg-green-100 text-green-800'
+      when 'failed', 'timed-out' then 'bg-red-100 text-red-800'
+      end %>"><%= run.status %></span>
+  </td>
+  <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+    <div class="mt-2">
+      <% if run.subject_image.attached? %>
+        <%= link_to run.subject_image, target: "_blank" do %>
+          <%= image_tag run.subject_image, class: "max-h-[100px] w-auto rounded-md" %>
+        <% end %>
+      <% else %>
+        <span class="inline-block bg-muted rounded-md px-2 py-1 text-xs">No image</span>
+      <% end %>
+    </div>
+  </td>
+  <td class="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+    <div class="mt-2">
+      <span class="inline-block bg-muted rounded-md px-2 py-1 text-xs"></span>
+    </div>
+  </td>
+</tr>

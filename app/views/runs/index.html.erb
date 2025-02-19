@@ -12,12 +12,23 @@
 
   <div id="runs" class="min-w-full">
     <% if @runs.any? %>
-      <% @runs.each do |run| %>
-        <%= render run %>
-        <p>
-          <%= link_to "Show this run", run, class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-        </p>
-      <% end %>
+      <table class="w-full">
+        <thead>
+          <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">ID</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">Prompt</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">Ran</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">Status</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">Input</th>
+            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">Output</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @runs.each do |run| %>
+            <%= render "runs/run_row", run: run %>
+          <% end %>
+        </tbody>
+      </table>
     <% else %>
       <p class="text-center my-10">No runs found.</p>
     <% end %>
