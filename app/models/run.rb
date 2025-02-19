@@ -14,7 +14,9 @@ class Run < ApplicationRecord
   # actions
 
   def trigger_webhook!
-    RunWebhook.create!(run: self, event_type: "run.#{status}")
+    if webhook_url.present?
+      RunWebhook.create!(run: self, event_type: "run.#{status}")
+    end
   end
 
   def perform!

@@ -7,12 +7,17 @@ class RunWebhook < ApplicationRecord
   validates :endpoint_url, presence: true
 
   before_validation :set_endpoint_url
+  before_validation :set_attempt_count
   after_create :deliver_webhook
 
   private
 
   def set_endpoint_url
     self.endpoint_url ||= run&.webhook_url
+  end
+
+  def set_attempt_count
+    self.attempt_count ||= 0
   end
 
   def deliver_webhook
