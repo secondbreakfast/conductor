@@ -14,13 +14,25 @@ module Stability
       image,
       background_prompt: nil,
       background_reference: nil,
-      preserve_original_subject: 0.8,
-      original_background_depth: 0.65,
+      foreground_prompt: nil,
+      negative_prompt: nil,
+      preserve_original_subject: 0.6,
+      original_background_depth: 0.5,
+      keep_original_background: false,
+      light_source_direction: nil,
+      light_reference: nil,
+      light_source_strength: 0.3,
+      seed: 0,
       output_format: "webp"
     )
       # Validate that either background_prompt or background_reference is provided
       if background_prompt.blank? && background_reference.blank?
         raise ArgumentError, "Either background_prompt or background_reference must be provided"
+      end
+
+      # Validate light_source_strength when light controls are used
+      if light_source_strength != 0.3 && light_reference.blank? && light_source_direction.blank?
+        raise ArgumentError, "light_source_strength requires light_reference or light_source_direction to be provided"
       end
 
       # Process and convert ActiveStorage blob to tempfile
@@ -30,22 +42,29 @@ module Stability
       tempfile.binmode
       processed_image.download { |chunk| tempfile.write(chunk) }
       tempfile.rewind
+
+      # Create tempfiles for reference images if provided
       background_tempfile = background_reference.present? ? create_tempfile_from_blob(background_reference) : nil
+      light_tempfile = light_reference.present? ? create_tempfile_from_blob(light_reference) : nil
 
       # Create form data
       payload = {
         subject_image: File.open(tempfile.path),
-        output_format: output_format,
         preserve_original_subject: preserve_original_subject,
-        original_background_depth: original_background_depth
+        original_background_depth: original_background_depth,
+        keep_original_background: keep_original_background,
+        seed: seed,
+        output_format: output_format
       }
 
-      # Add either background_prompt or background_reference to payload
-      if background_reference.present?
-        payload[:background_reference] = File.open(background_tempfile.path)
-      else
-        payload[:background_prompt] = background_prompt
-      end
+      # Add optional parameters to payload
+      payload[:background_reference] = File.open(background_tempfile.path) if background_reference.present?
+      payload[:background_prompt] = background_prompt if background_prompt.present?
+      payload[:foreground_prompt] = foreground_prompt if foreground_prompt.present?
+      payload[:negative_prompt] = negative_prompt if negative_prompt.present?
+      payload[:light_source_direction] = light_source_direction if light_source_direction.present?
+      payload[:light_reference] = File.open(light_tempfile.path) if light_reference.present?
+      payload[:light_source_strength] = light_source_strength if light_source_strength != 0.3
 
       puts "Payload: #{payload}"
 
@@ -63,6 +82,8 @@ module Stability
       tempfile&.unlink
       background_tempfile&.close
       background_tempfile&.unlink
+      light_tempfile&.close
+      light_tempfile&.unlink
     end
 
     def get_generation(generation_id)
@@ -156,6 +177,10 @@ module Stability
                     "mp4"
       when "image/webp"
                     "webp"
+      when "image/png"
+                    "png"
+      when "image/jpeg"
+                    "jpg"
       else
                     raise ApiError, "Unexpected content type: #{content_type}"
       end
