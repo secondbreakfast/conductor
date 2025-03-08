@@ -8,14 +8,22 @@ class PromptRun < ApplicationRecord
   delegate :selected_provider, to: :prompt
   delegate :selected_model, to: :prompt
 
-  after_commit :perform, on: :create
+  after_commit :perform!, on: :create
 
   def perform!
-    BackgroundRunJob.perform_later(self)
+    if prompt.endpoint_type == "Chat"
+      perform
+    else
+      perform_later
+    end
   end
 
   def perform
     Runner.run(self)
+  end
+
+  def perform_later
+    BackgroundRunJob.perform_later(self)
   end
 
   def poll
