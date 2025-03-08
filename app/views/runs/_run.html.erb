@@ -34,8 +34,27 @@
       </div>
     </dl>
   </div>
+
+  <div class="rounded-xl border bg-card text-card-foreground shadow p-6 mb-6">
+    <dl class="divide-y divide-gray-200">
+      <div class="flex justify-between py-3">
+        <dt class="font-medium text-gray-600">Prompt Result</dt>
+      </div>
+      <div class="py-3">
+        <% if run && run.prompt_runs.any? %>
+          <% run.prompt_runs.each do |prompt_run| %>
+            <div class="mb-4">
+              <pre class="bg-gray-100 p-4 rounded-lg overflow-auto text-sm whitespace-pre-wrap"><%= JSON.pretty_generate(prompt_run.response) %></pre>
+            </div>
+          <% end %>
+        <% else %>
+          <p class="text-gray-500 italic">No prompt results available</p>
+        <% end %>
+      </div>
+    </dl>
+  </div>
   
-  <div class="grid md:grid-cols-2 gap-6">
+  <div class="grid md:grid-cols-2 gap-6 mb-6">
       <div class="rounded-xl border bg-card text-card-foreground shadow p-6">
           <h2 class="text-xl font-semibold mb-4">Input</h2>
           <div class="space-y-4">
