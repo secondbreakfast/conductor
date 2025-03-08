@@ -4,10 +4,18 @@ class PromptRun < ApplicationRecord
 
   has_many_attached :attachments
 
+  delegate :endpoint_type, to: :prompt
+  delegate :selected_provider, to: :prompt
+  delegate :selected_model, to: :prompt
+
   after_commit :perform!, on: :create
 
   def perform!
     BackgroundRunJob.perform_later(self)
+  end
+
+  def run
+    Runner.new(self).run
   end
 
   def perform
