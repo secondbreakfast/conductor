@@ -63,10 +63,12 @@
               <% else %>
                 <p class="text-sm text-muted-foreground">No input image attached</p>
               <% end %>
-              <div class="flex items-center space-x-2 mt-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground h-5 w-5 flex-shrink-0"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                  <span class="text-sm text-muted-foreground truncate"><%= link_to run.subject_image.filename, rails_blob_path(run.subject_image, disposition: 'attachment') %></span>
-              </div>
+              <% if run.subject_image.attached? %>
+                <div class="flex items-center space-x-2 mt-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground h-5 w-5 flex-shrink-0"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span class="text-sm text-muted-foreground truncate"><%= link_to run.subject_image.filename, rails_blob_path(run.subject_image, disposition: 'attachment') %></span>
+                </div>
+              <% end %>
           </div>
       </div>
       <div class="rounded-xl border bg-card text-card-foreground shadow p-6">
@@ -82,10 +84,12 @@
                     <source src="<%= rails_blob_path(attachment) %>" type="<%= attachment.content_type %>">
                   </video>
                 <% end %>
-                <div class="flex items-center space-x-2 mt-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground h-5 w-5 flex-shrink-0"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                    <span class="text-sm text-muted-foreground truncate"><%= link_to attachment.filename, rails_blob_path(attachment, disposition: 'attachment') %></span>
-                </div>
+                <% if attachment %>
+                  <div class="flex items-center space-x-2 mt-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground h-5 w-5 flex-shrink-0"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                      <span class="text-sm text-muted-foreground truncate"><%= link_to attachment.filename, rails_blob_path(attachment, disposition: 'attachment') %></span>
+                  </div>
+                <% end %>
               <% end %>
           </div>
       </div>

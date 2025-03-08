@@ -5,6 +5,10 @@ module PromptRunner
         # Anthropic-specific run here
         response = call_messages!
         puts response
+
+        prompt_run.update!(
+          response: response
+        )
       end
 
       def client
@@ -13,27 +17,25 @@ module PromptRunner
 
       def call_messages!
         client.messages(
-          {
-            parameters: {
-              model: selected_model,
-              system: system_prompt,
-              messages: messages,
-              max_tokens: 1024
-            }
+          parameters: {
+            model: selected_model,
+            system: system_prompt,
+            messages: messages,
+            max_tokens: 1024
           }
         )
       end
 
       def selected_model
-        "claude-3-sonnet-20240229"
+        prompt_run.prompt.selected_model || "claude-3-sonnet-20240229"
       end
 
       def system_prompt
-        "You are an assistant."
+        prompt_run.prompt.system_prompt || "You are an assistant."
       end
 
       def messages
-        [ { role: "user", content: "Hello, world" } ]
+        [ { role: "user", content: prompt_run.run.message } ]
       end
     end
   end

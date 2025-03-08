@@ -18,7 +18,7 @@ class Runner
 
   def run
     # Common chat logic if needed, or delegate directly to provider-specific runner
-    provider_runner
+    provider_runner.run
   end
 
   private

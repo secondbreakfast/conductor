@@ -4,12 +4,28 @@
     <%= prompt.action %>
   </p>
   <p class="my-5">
+    <strong class="block font-medium mb-1">Endpoint type:</strong>
+    <%= prompt.endpoint_type %>
+  </p>
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Selected provider:</strong>
+    <%= prompt.selected_provider %>
+  </p>
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Selected model:</strong>
+    <%= prompt.selected_model %>
+  </p>
+  <p class="my-5">
     <strong class="block font-medium mb-1">Subject image:</strong>
     <%= image_tag prompt.subject_image, class: "w-full" if prompt.subject_image.present? %>
   </p>
   <p class="my-5">
     <strong class="block font-medium mb-1">Background prompt:</strong>
     <%= prompt.background_prompt %>
+  </p>
+  <p class="my-5">
+    <strong class="block font-medium mb-1">System prompt:</strong>
+    <%= prompt.system_prompt %>
   </p>
   <p class="my-5">
     <strong class="block font-medium mb-1">Background reference:</strong>
