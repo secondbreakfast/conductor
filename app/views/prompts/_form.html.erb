@@ -24,6 +24,42 @@
   </div>
 
   <div class="my-5">
+    <%= form.label :endpoint_type %>
+    <%= form.select :endpoint_type, 
+      [
+        ["Chat", "Chat"],
+        ["Image To Image", "ImageToImage"]
+      ],
+      { include_blank: "Select an endpoint type" },
+      class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": prompt.errors[:endpoint_type].none?, "border-red-400 focus:outline-red-600": prompt.errors[:endpoint_type].any?}] 
+    %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :selected_provider %>
+    <%= form.select :selected_provider, 
+      [
+        ["Anthropic", "Anthropic"],
+        ["Stability", "Stability"]
+      ],
+      { include_blank: "Select a provider" },
+      class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": prompt.errors[:selected_provider].none?, "border-red-400 focus:outline-red-600": prompt.errors[:selected_provider].any?}] 
+    %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :selected_model %>
+    <%= form.select :selected_model, 
+      [
+        ["claude-3-sonnet-20240229", "claude-3-sonnet-20240229"],
+        ["replace_background_and_relight", "replace_background_and_relight"]
+      ],
+      { include_blank: "Select a model" },
+      class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": prompt.errors[:selected_model].none?, "border-red-400 focus:outline-red-600": prompt.errors[:selected_model].any?}] 
+    %>
+  </div>
+
+  <div class="my-5">
     <%= form.label :subject_image %>
     <%= form.file_field :subject_image, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": prompt.errors[:subject_image].none?, "border-red-400 focus:outline-red-600": prompt.errors[:subject_image].any?}] %>
   </div>
@@ -31,6 +67,11 @@
   <div class="my-5">
     <%= form.label :background_prompt %>
     <%= form.textarea :background_prompt, rows: 4, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": prompt.errors[:background_prompt].none?, "border-red-400 focus:outline-red-600": prompt.errors[:background_prompt].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :system_prompt %>
+    <%= form.textarea :system_prompt, rows: 4, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": prompt.errors[:system_prompt].none?, "border-red-400 focus:outline-red-600": prompt.errors[:system_prompt].any?}] %>
   </div>
 
   <div class="my-5">

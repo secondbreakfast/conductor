@@ -70,3 +70,5 @@ gem 'httparty'
 gem "google-cloud-storage"
 
 gem "rack-cors"
+
+gem "anthropic"

@@ -19,41 +19,7 @@ class PromptRun < ApplicationRecord
   end
 
   def perform
-    result = nil
-    if prompt.action == "replace_background_and_relight"
-      params = {}
-
-      # Only add params if they're present
-      params[:background_prompt] = prompt.background_prompt if prompt.background_prompt.present?
-      params[:background_reference] = background_reference if background_reference.present?
-      params[:foreground_prompt] = prompt.foreground_prompt if prompt.foreground_prompt.present?
-      params[:negative_prompt] = prompt.negative_prompt if prompt.negative_prompt.present?
-      params[:preserve_original_subject] = prompt.preserve_original_subject unless prompt.preserve_original_subject.nil?
-      params[:original_background_depth] = prompt.original_background_depth unless prompt.original_background_depth.nil?
-      params[:keep_original_background] = prompt.keep_original_background unless prompt.keep_original_background.nil?
-      params[:seed] = prompt.seed if prompt.seed.present?
-      params[:output_format] = prompt.output_format if prompt.output_format.present?
-
-      result = Stability::ApiWrapper.new.replace_background_and_relight(subject_image, **params)
-    elsif prompt.action == "image_to_video"
-      result = Stability::ApiWrapper.new.image_to_video(
-        subject_image
-      )
-    end
-    if result.present?
-      update!(
-        response: {
-          body: result.parsed_response,
-          status: result.code,
-          error: result.success? ? nil : result.body
-        }
-      )
-    end
-    if result.success?
-      PollRunJob.set(wait: 5.seconds).perform_later(self)
-    else
-      update_with_status!("failed")
-    end
+    Runner.run(self)
   end
 
   def poll
