@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_19_134740) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_26_224929) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -78,6 +78,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_19_134740) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "action"
+    t.string "endpoint_type"
+    t.string "selected_model"
+    t.string "selected_provider"
+    t.text "system_prompt"
+    t.jsonb "tools"
     t.index ["flow_id"], name: "index_prompts_on_flow_id"
   end
 
@@ -104,6 +109,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_19_134740) do
     t.datetime "updated_at", null: false
     t.string "input_image_url"
     t.string "webhook_url"
+    t.text "message"
     t.index ["flow_id"], name: "index_runs_on_flow_id"
   end
 
