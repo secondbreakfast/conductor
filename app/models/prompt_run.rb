@@ -53,10 +53,12 @@ class PromptRun < ApplicationRecord
       {
         video_url: attachments.first.present? ? Rails.application.routes.url_helpers.rails_blob_url(attachments.first, host: "https://conductor-production-662c.up.railway.app") : nil
       }
-    else
+    elsif prompt.endpoint_type == "ImageToImage"
       {
         image_url: attachments.first.present? ? Rails.application.routes.url_helpers.rails_blob_url(attachments.first, host: "https://conductor-production-662c.up.railway.app") : nil
       }
+    else
+      response
     end
   end
 end
