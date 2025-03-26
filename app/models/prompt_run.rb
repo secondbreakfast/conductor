@@ -48,26 +48,6 @@ class PromptRun < ApplicationRecord
     RunWebhookJob.perform_later(run)
   end
 
-  def subject_image
-    if run.subject_image.attached?
-      run.subject_image
-    elsif prompt.subject_image.attached?
-      prompt.subject_image
-    else
-      nil
-    end
-  end
-
-  def background_reference
-    if run.background_reference.attached?
-      run.background_reference
-    elsif prompt.background_reference.attached?
-      prompt.background_reference
-    else
-      nil
-    end
-  end
-
   def data
     if prompt.action == "image_to_video"
       {

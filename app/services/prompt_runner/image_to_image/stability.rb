@@ -21,7 +21,7 @@ module PromptRunner
         params[:seed] = prompt.seed if prompt.seed.present?
         params[:output_format] = prompt.output_format if prompt.output_format.present?
 
-        result = Stability::ApiWrapper.new.replace_background_and_relight(subject_image, **params)
+        result = ::Stability::ApiWrapper.new.replace_background_and_relight(subject_image, **params)
         if result.present?
           prompt_run.update!(
             response: {
@@ -35,6 +35,26 @@ module PromptRunner
           PollRunJob.set(wait: 5.seconds).perform_later(prompt_run)
         else
           prompt_run.update_with_status!("failed")
+        end
+      end
+
+      def subject_image
+        if prompt_run.run.subject_image.attached?
+          prompt_run.run.subject_image
+        elsif prompt.subject_image.attached?
+          prompt.subject_image
+        else
+          nil
+        end
+      end
+
+      def background_reference
+        if prompt_run.run.background_reference.attached?
+          prompt_run.run.background_reference
+        elsif prompt.background_reference.attached?
+          prompt.background_reference
+        else
+          nil
         end
       end
     end
