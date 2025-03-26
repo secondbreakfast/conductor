@@ -1,4 +1,4 @@
-<%= form_with(model: run, class: "contents") do |form| %>
+<%= form_with(model: run, class: "contents", data: { controller: "run-form" }) do |form| %>
   <% if run.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
       <h2><%= pluralize(run.errors.count, "error") %> prohibited this run from being saved:</h2>
@@ -11,57 +11,81 @@
     </div>
   <% end %>
 
+  <!-- Flow selection now as a hidden field if it's pre-selected or a visible dropdown otherwise -->
+  <% if params[:flow_id].present? || run.flow_id.present? %>
+    <%= form.hidden_field :flow_id, value: params[:flow_id] || run.flow_id, data: { run_form_target: "flowId", action: "change->run-form#onFlowChange" } %>
+    <div class="my-5">
+      <strong>Selected Flow:</strong> <%= Flow.find_by(id: params[:flow_id] || run.flow_id)&.name || "Unknown Flow" %>
+    </div>
+  <% else %>
+    <div class="my-5">
+      <%= form.label :flow_id %>
+      <%= form.collection_select :flow_id, 
+          Flow.all, 
+          :id, 
+          :name, 
+          { prompt: "Select a flow" },
+          { 
+            class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", 
+                    {"border-gray-400 focus:outline-blue-600": run.errors[:flow_id].none?, 
+                     "border-red-400 focus:outline-red-600": run.errors[:flow_id].any?}],
+            data: { run_form_target: "flowId", action: "change->run-form#onFlowChange" }
+          }
+      %>
+    </div>
+  <% end %>
+
+  <!-- Common fields for all endpoint types -->
   <div class="my-5">
-    <%= form.label :flow_id %>
-    <%= form.collection_select :flow_id, 
-        Flow.all, 
-        :id, 
-        :name, 
-        { prompt: "Select a flow" },
-        class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", 
-                {"border-gray-400 focus:outline-blue-600": run.errors[:flow_id].none?, 
-                 "border-red-400 focus:outline-red-600": run.errors[:flow_id].any?}] 
+    <%= form.label :message %>
+    <%= form.text_area :message, 
+      rows: 4, 
+      class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", 
+              {"border-gray-400 focus:outline-blue-600": run.errors[:message].none?, 
+               "border-red-400 focus:outline-red-600": run.errors[:message].any?}],
+      data: { run_form_target: "message" }
     %>
   </div>
 
   <div class="my-5">
-    <%= form.label :status %>
-    <%= form.text_field :status, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": run.errors[:status].none?, "border-red-400 focus:outline-red-600": run.errors[:status].any?}] %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :started_at %>
-    <%= form.datetime_field :started_at, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": run.errors[:started_at].none?, "border-red-400 focus:outline-red-600": run.errors[:started_at].any?}] %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :completed_at %>
-    <%= form.datetime_field :completed_at, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": run.errors[:completed_at].none?, "border-red-400 focus:outline-red-600": run.errors[:completed_at].any?}] %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :message %>
-    <%= form.textarea :message, rows: 4, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": run.errors[:message].none?, "border-red-400 focus:outline-red-600": run.errors[:message].any?}] %>
-  </div>
-
-  <div class="my-5">
     <%= form.label :input_image_url %>
-    <%= form.text_field :input_image_url, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": run.errors[:input_image_url].none?, "border-red-400 focus:outline-red-600": run.errors[:input_image_url].any?}] %>
+    <%= form.text_field :input_image_url, 
+      class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", 
+              {"border-gray-400 focus:outline-blue-600": run.errors[:input_image_url].none?, 
+               "border-red-400 focus:outline-red-600": run.errors[:input_image_url].any?}],
+      data: { run_form_target: "inputImageUrl" }
+    %>
   </div>
 
   <div class="my-5">
     <%= form.label :subject_image %>
-    <%= form.file_field :subject_image, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": run.errors[:subject_image].none?, "border-red-400 focus:outline-red-600": run.errors[:subject_image].any?}] %>
+    <%= form.file_field :subject_image, 
+      class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", 
+              {"border-gray-400 focus:outline-blue-600": run.errors[:subject_image].none?, 
+               "border-red-400 focus:outline-red-600": run.errors[:subject_image].any?}],
+      data: { run_form_target: "subjectImage" }
+    %>
   </div>
 
+  <!-- Fields for ImageToImage endpoint type -->
   <div class="my-5">
     <%= form.label :subject_video %>
-    <%= form.file_field :subject_video, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": run.errors[:subject_video].none?, "border-red-400 focus:outline-red-600": run.errors[:subject_video].any?}] %>
+    <%= form.file_field :subject_video, 
+      class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", 
+              {"border-gray-400 focus:outline-blue-600": run.errors[:subject_video].none?, 
+               "border-red-400 focus:outline-red-600": run.errors[:subject_video].any?}],
+      data: { run_form_target: "subjectVideo" }
+    %>
   </div>
 
   <div class="my-5">
     <%= form.label :background_reference %>
-    <%= form.file_field :background_reference, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": run.errors[:background_reference].none?, "border-red-400 focus:outline-red-600": run.errors[:background_reference].any?}] %>
+    <%= form.file_field :background_reference, 
+      class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", 
+              {"border-gray-400 focus:outline-blue-600": run.errors[:background_reference].none?, 
+               "border-red-400 focus:outline-red-600": run.errors[:background_reference].any?}],
+      data: { run_form_target: "backgroundReference" }
+    %>
   </div>
 
   <div class="inline">
