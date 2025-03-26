@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_08_174223) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_26_224929) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -82,6 +82,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_08_174223) do
     t.string "selected_model"
     t.string "selected_provider"
     t.text "system_prompt"
+    t.jsonb "tools"
     t.index ["flow_id"], name: "index_prompts_on_flow_id"
   end
 

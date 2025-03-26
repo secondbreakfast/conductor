@@ -9,6 +9,7 @@ module PromptRunner
         prompt_run.update!(
           response: response
         )
+        prompt_run.update_with_status!("completed")
       end
 
       def client
@@ -16,19 +17,27 @@ module PromptRunner
       end
 
       def call_messages!
-        client.messages(
-          parameters: {
-            model: selected_model,
-            system: system_prompt,
-            messages: messages,
-            max_tokens: 1024,
-            tools: tools,
-            tool_choice: {
+        params = {
+          model: selected_model,
+          system: system_prompt,
+          messages: messages,
+          max_tokens: 1024
+        }
+
+        # Add tools and tool_choice if tools are available
+        if tools.present?
+          params[:tools] = tools
+
+          # Set tool_choice to the first tool if available
+          if tools.first && tools.first["name"].present?
+            params[:tool_choice] = {
               type: "tool",
-              name: "get_drink_name"
+              name: tools.first["name"]
             }
-          }
-        )
+          end
+        end
+
+        client.messages(parameters: params)
       end
 
       def selected_model
@@ -67,22 +76,30 @@ module PromptRunner
       end
 
       def tools
-        [
-          {
-            "name": "get_drink_name",
-            "description": "Get the name of a drink.",
-            "input_schema": {
-              "type": "object",
-              "properties": {
-                "drink_name": {
-                  "type": "string",
-                  "description": "The name of a drink, e.g. 'coffee' or 'tea' or 'negroni', etc."
-                }
-              },
-              "required": [ "drink_name" ]
+        # Use the tools from the prompt if available, otherwise return a default
+        if prompt_run.prompt.tools.present?
+          # Convert the JSONB data to a Ruby hash structure
+          # The tools are already stored in the proper format for the API
+          prompt_run.prompt.tools
+        else
+          # Default tools as a fallback
+          [
+            {
+              "name": "get_drink_name",
+              "description": "Get the name of a drink.",
+              "input_schema": {
+                "type": "object",
+                "properties": {
+                  "drink_name": {
+                    "type": "string",
+                    "description": "The name of a drink, e.g. 'coffee' or 'tea' or 'negroni', etc."
+                  }
+                },
+                "required": [ "drink_name" ]
+              }
             }
-          }
-        ]
+          ]
+        end
       end
     end
   end
