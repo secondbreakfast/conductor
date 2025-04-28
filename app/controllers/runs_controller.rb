@@ -76,7 +76,7 @@ class RunsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def run_params
-      params.require(:run).permit(:flow_id, :message, :subject_image, :conversation_id)
+      params.require(:run).permit(:flow_id, :message, :subject_image, :conversation_id, :webhook_url, :input_image_url)
     end
 
     def json_request?
