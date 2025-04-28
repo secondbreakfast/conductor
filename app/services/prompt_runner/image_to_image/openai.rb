@@ -51,6 +51,7 @@ module PromptRunner
               error: nil
             }
           )
+          prompt_run.update_with_status!("completed")
         else
           prompt_run.update_with_status!("failed")
         end
