@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  provider_id: MyString
+  role: MyString
+  response_type: MyString
+  status: MyString
+  call_id: MyString
+  name: MyString
+  arguments: MyText
+  prompt_run: one
+
+two:
+  provider_id: MyString
+  role: MyString
+  response_type: MyString
+  status: MyString
+  call_id: MyString
+  name: MyString
+  arguments: MyText
+  prompt_run: two

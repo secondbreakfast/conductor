@@ -6,9 +6,27 @@ module PromptRunner
         response = call_messages!
         puts response
 
+        # Extract usage information
+        usage = response.dig("usage")
+        input_tokens = usage&.dig("input_tokens")
+        output_tokens = usage&.dig("output_tokens")
+        total_tokens = usage&.dig("total_tokens")
+
+        # Extract model information
+        model_used = response.dig("model")
+
         prompt_run.update!(
-          response: response
+          response: response,
+          input_tokens: input_tokens,
+          output_tokens: output_tokens,
+          total_tokens: total_tokens,
+          selected_provider: prompt_run.prompt.selected_provider, # Get provider from prompt
+          model: model_used                                      # Get model from response
         )
+
+        # Create Response and Output records from the response
+        create_responses_and_outputs!
+
         prompt_run.update_with_status!("completed")
       end
 
@@ -19,46 +37,102 @@ module PromptRunner
       def call_messages!
         params = {
           model: selected_model,
-          messages: formatted_messages,
-          max_tokens: 1024
+          input: input
         }
 
-        # Add tools and tool_choice if tools are present
+        # Add tools if present
         if tools.present?
           params[:tools] = tools
-
-          # Set tool_choice to the first tool if available
-          if tools.first && tools.first["name"].present?
-            params[:tool_choice] = {
-              type: "function",
-              function: { name: tools.first["name"] }
-            }
-          end
         end
 
-        client.chat(parameters: params)
+        # Add previous_response_id if this is a follow-up message
+        if prompt_run.run.previous_response_id.present?
+          params[:previous_response_id] = prompt_run.run.previous_response_id
+        end
+
+        response = client.responses.create(parameters: params)
+        response
+
+        # # Extract the response text from the new format
+        # if response.dig("output", 0, "content", 0, "text").present?
+        #   response.dig("output", 0, "content", 0, "text")
+        # elsif response.dig("output", 0, "name").present?
+        #   # Handle tool call responses
+        #   {
+        #     tool_name: response.dig("output", 0, "name"),
+        #     tool_args: response.dig("output", 0, "parameters")
+        #   }
+        # else
+        #   response # Return full response if format is unexpected
+        # end
+      end
+
+      def call_messages_with_streaming!
+        params = {
+          model: selected_model,
+          input: formatted_content,
+          stream: proc do |chunk, _bytesize|
+            if chunk["type"] == "response.output_text.delta"
+              print chunk["delta"]
+              $stdout.flush
+            end
+          end
+        }
+
+        # Add tools if present
+        if tools.present?
+          params[:tools] = tools
+        end
+
+        # Add previous_response_id if this is a follow-up message
+        if prompt_run.run.previous_response_id.present?
+          params[:previous_response_id] = prompt_run.run.previous_response_id
+        end
+
+        client.responses.create(parameters: params)
+      end
+
+      def retrieve_response(response_id)
+        client.responses.retrieve(response_id: response_id)
+      end
+
+      def delete_response(response_id)
+        client.responses.delete(response_id: response_id)
       end
 
       def selected_model
-        prompt_run.prompt.selected_model || "gpt-4-turbo"
+        prompt_run.prompt.selected_model || "gpt-4o"
       end
 
-      def formatted_messages
-        messages = []
+      def input
+        {
+          role: "user",
+          content: input_content
+        }
+      end
 
-        # Add system message if present
-        if system_prompt.present?
-          messages << { role: "system", content: system_prompt }
+      def input_content
+        contents = []
+
+        if prompt_run.run.message.present?
+          contents << {
+            type: "input_text",
+            text: prompt_run.run.message
+          }
         end
 
-        # Add user message with content
-        messages << { role: "user", content: formatted_content }
+        if prompt_run.run.subject_image.attached?
+          contents << {
+            type: "input_image",
+            image_url: Rails.application.routes.url_helpers.rails_blob_url(
+              prompt_run.run.subject_image,
+              only_path: false,
+              host: ENV["HOST_URL"] || "http://localhost:3000"
+            )
+          }
+        end
 
-        messages
-      end
-
-      def system_prompt
-        prompt_run.prompt.system_prompt || "You are a helpful assistant."
+        contents
       end
 
       def formatted_content
@@ -96,20 +170,49 @@ module PromptRunner
       def tools
         # Use the tools from the prompt if available, otherwise return an empty array
         if prompt_run.prompt.tools.present?
-          # Convert the tools to OpenAI format
-          # The structure is slightly different from Anthropic
           prompt_run.prompt.tools.map do |tool|
             {
               type: "function",
-              function: {
-                name: tool["name"],
-                description: tool["description"],
-                parameters: tool["input_schema"]
-              }
+              name: tool["name"],
+              description: tool["description"],
+              parameters: tool["parameters"]
             }
           end
         else
           [] # OpenAI doesn't require default tools
+        end
+      end
+
+      def create_responses_and_outputs!
+        response = prompt_run.response
+        # Only proceed if there are outputs in the response
+        outputs = response.dig("output")
+        return unless outputs.present?
+
+        # Process each output item
+        outputs.each do |output_data|
+          # Create a Response record
+          response_record = prompt_run.responses.create!(
+            provider_id: output_data["id"],
+            role: output_data["role"],
+            response_type: output_data["type"],
+            status: output_data["status"],
+            call_id: output_data["call_id"],
+            name: output_data["name"],
+            arguments: output_data["arguments"]
+          )
+
+          # Create Output records if content exists
+          if output_data["content"].present?
+            output_data["content"].each do |content_item|
+              response_record.outputs.create!(
+                provider_id: content_item["id"],
+                text: content_item["text"],
+                content_type: content_item["type"],
+                annotations: content_item["annotations"].to_json
+              )
+            end
+          end
         end
       end
     end

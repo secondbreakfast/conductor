@@ -34,7 +34,7 @@
     <%= form.select :selected_provider, 
       options_for_select(
         prompt.endpoint_type == "Chat" ? [["Anthropic", "Anthropic"], ["OpenAI", "Openai"]] : 
-        prompt.endpoint_type == "ImageToImage" ? [["Stability", "Stability"]] : 
+        prompt.endpoint_type == "ImageToImage" ? [["Stability", "Stability"], ["OpenAI", "Openai"]] : 
         [], 
         prompt.selected_provider
       ),
@@ -64,6 +64,8 @@
            ["gpt-3.5-turbo", "gpt-3.5-turbo"]] : 
         prompt.endpoint_type == "ImageToImage" && prompt.selected_provider == "Stability" ? 
           [["replace_background_and_relight", "replace_background_and_relight"]] : 
+        prompt.endpoint_type == "ImageToImage" && prompt.selected_provider == "Openai" ? 
+          [["gpt-image-1", "gpt-image-1"], ["dall-e-3", "dall-e-3"], ["dall-e-2", "dall-e-2"]] : 
         [],
         prompt.selected_model
       ),
@@ -103,7 +105,8 @@
     <%= form.select :action, 
       [
         ["Replace Background and Relight", "replace_background_and_relight"],
-        ["Image to Video", "image_to_video"]
+        ["Image to Video", "image_to_video"],
+        ["Image Edit", "image_edit"]
       ],
       { include_blank: "Select an action" },
       { 

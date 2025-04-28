@@ -1,4 +1,8 @@
 class Runner
+  def self.provider(prompt_run)
+    new(prompt_run).provider
+  end
+
   def self.run(prompt_run)
     new(prompt_run).run
   end
@@ -19,6 +23,10 @@ class Runner
   def run
     # Common chat logic if needed, or delegate directly to provider-specific runner
     provider_runner.run
+  end
+
+  def provider
+    provider_runner
   end
 
   private

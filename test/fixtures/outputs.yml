@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  provider_id: MyString
+  text: MyText
+  content_type: MyString
+  annotations: MyText
+  response: one
+
+two:
+  provider_id: MyString
+  text: MyText
+  content_type: MyString
+  annotations: MyText
+  response: two

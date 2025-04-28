@@ -2,6 +2,7 @@ class RunsController < ApplicationController
   skip_before_action :verify_authenticity_token, if: :json_request?
   allow_unauthenticated_access only: %i[ create show ]
   before_action :set_run, only: %i[ show edit update destroy ]
+  layout "authenticated"
 
   # GET /runs or /runs.json
   def index
@@ -31,15 +32,15 @@ class RunsController < ApplicationController
   def create
     @run = Run.new(run_params)
 
-
-    respond_to do |format|
-      if @run.save
-        format.html { redirect_to @run, notice: "Run was successfully created." }
-        format.json { render :show, status: :created, location: @run }
+    if @run.save
+      if @run.conversation_id.present?
+        redirect_to conversation_path(@run.conversation)
       else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @run.errors, status: :unprocessable_entity }
+        redirect_to @run
       end
+    else
+      # Handle errors
+      render :new
     end
   end
 
@@ -75,7 +76,7 @@ class RunsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def run_params
-      params.require(:run).permit(:flow_id, :status, :started_at, :completed_at, :subject_image, :subject_video, :background_reference, :input_image_url, :webhook_url, :message, attachments: [])
+      params.require(:run).permit(:flow_id, :message, :subject_image, :conversation_id)
     end
 
     def json_request?

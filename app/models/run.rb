@@ -1,5 +1,6 @@
 class Run < ApplicationRecord
   belongs_to :flow
+  belongs_to :conversation, optional: true
   has_many :prompt_runs, dependent: :destroy
 
   has_one_attached :subject_image
@@ -31,6 +32,10 @@ class Run < ApplicationRecord
   end
 
   # helpers
+
+  def previous_response_id
+    nil
+  end
 
   def data
     prompt_runs.map(&:data).reduce({}, :merge)

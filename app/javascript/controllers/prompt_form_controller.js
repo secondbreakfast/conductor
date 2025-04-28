@@ -100,6 +100,7 @@ export default class extends Controller {
     } else if (endpointType === "ImageToImage") {
       // For ImageToImage, only offer Stability provider
       this.selectedProviderTarget.innerHTML += '<option value="Stability">Stability</option>'
+      this.selectedProviderTarget.innerHTML += '<option value="Openai">OpenAI</option>'
       
       // Restore provider selection if valid
       if (currentProvider === "Stability") {
@@ -163,6 +164,18 @@ export default class extends Controller {
       
       // Restore model selection if valid
       if (currentModel === "replace_background_and_relight") {
+        this.selectedModelTarget.value = currentModel
+      }
+    } else if (endpointType === "ImageToImage" && selectedProvider === "Openai") {
+      // For ImageToImage with OpenAI, offer GPT models
+      this.selectedModelTarget.innerHTML += '<option value="gpt-image-1">gpt-image-1</option>'
+      this.selectedModelTarget.innerHTML += '<option value="dall-e-3">dall-e-3</option>'
+      this.selectedModelTarget.innerHTML += '<option value="dall-e-2">dall-e-2</option>'
+
+      // Restore model selection if valid
+      if (currentModel === "gpt-image-1" || 
+          currentModel === "dall-e-3" || 
+          currentModel === "dall-e-2") {
         this.selectedModelTarget.value = currentModel
       }
     }
