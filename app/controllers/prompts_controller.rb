@@ -1,5 +1,6 @@
 class PromptsController < ApplicationController
   before_action :set_prompt, only: %i[ show edit update destroy ]
+  layout "authenticated"
 
   # GET /prompts or /prompts.json
   def index

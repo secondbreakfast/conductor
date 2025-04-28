@@ -72,3 +72,4 @@ gem "google-cloud-storage"
 gem "rack-cors"
 
 gem "anthropic"
+gem "ruby-openai"

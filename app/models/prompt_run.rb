@@ -4,6 +4,9 @@ class PromptRun < ApplicationRecord
 
   has_many_attached :attachments
 
+  has_many :responses, dependent: :destroy
+  has_many :outputs, through: :responses
+
   delegate :endpoint_type, to: :prompt
   delegate :selected_provider, to: :prompt
   delegate :selected_model, to: :prompt
@@ -41,10 +44,10 @@ class PromptRun < ApplicationRecord
     end
   end
 
-  def update_with_status!(status)
-    update!(status: status)
-    run.update!(status: status)
-    run.update!(completed_at: Time.current) if status == "completed"
+  def update_with_status!(new_status)
+    update!(status: new_status)
+    run.update!(status: new_status)
+    run.update!(completed_at: Time.current) if new_status == "completed"
     RunWebhookJob.perform_later(run)
   end
 
@@ -53,10 +56,12 @@ class PromptRun < ApplicationRecord
       {
         video_url: attachments.first.present? ? Rails.application.routes.url_helpers.rails_blob_url(attachments.first, host: "https://conductor-production-662c.up.railway.app") : nil
       }
-    else
+    elsif prompt.endpoint_type == "ImageToImage"
       {
         image_url: attachments.first.present? ? Rails.application.routes.url_helpers.rails_blob_url(attachments.first, host: "https://conductor-production-662c.up.railway.app") : nil
       }
+    else
+      response
     end
   end
 end

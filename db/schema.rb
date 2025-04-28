@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_26_224929) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_09_222928) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -42,11 +42,28 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_26_224929) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "conversations", force: :cascade do |t|
+    t.string "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "flows", force: :cascade do |t|
     t.string "name"
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "outputs", force: :cascade do |t|
+    t.string "provider_id"
+    t.text "text"
+    t.string "content_type"
+    t.text "annotations"
+    t.bigint "response_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["response_id"], name: "index_outputs_on_response_id"
   end
 
   create_table "prompt_runs", force: :cascade do |t|
@@ -58,6 +75,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_26_224929) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "response"
+    t.integer "input_tokens", default: 0
+    t.integer "output_tokens", default: 0
+    t.integer "total_tokens", default: 0
+    t.string "selected_provider"
+    t.string "model"
     t.index ["prompt_id"], name: "index_prompt_runs_on_prompt_id"
     t.index ["run_id"], name: "index_prompt_runs_on_run_id"
   end
@@ -86,6 +108,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_26_224929) do
     t.index ["flow_id"], name: "index_prompts_on_flow_id"
   end
 
+  create_table "responses", force: :cascade do |t|
+    t.string "provider_id"
+    t.string "role"
+    t.string "response_type"
+    t.string "status"
+    t.string "call_id"
+    t.string "name"
+    t.text "arguments"
+    t.bigint "prompt_run_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["prompt_run_id"], name: "index_responses_on_prompt_run_id"
+  end
+
   create_table "run_webhooks", force: :cascade do |t|
     t.bigint "run_id", null: false
     t.string "event_type"
@@ -110,6 +146,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_26_224929) do
     t.string "input_image_url"
     t.string "webhook_url"
     t.text "message"
+    t.bigint "conversation_id"
+    t.index ["conversation_id"], name: "index_runs_on_conversation_id"
     t.index ["flow_id"], name: "index_runs_on_flow_id"
   end
 
@@ -253,10 +291,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_26_224929) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "outputs", "responses"
   add_foreign_key "prompt_runs", "prompts"
   add_foreign_key "prompt_runs", "runs"
   add_foreign_key "prompts", "flows"
+  add_foreign_key "responses", "prompt_runs"
   add_foreign_key "run_webhooks", "runs"
+  add_foreign_key "runs", "conversations"
   add_foreign_key "runs", "flows"
   add_foreign_key "sessions", "users"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

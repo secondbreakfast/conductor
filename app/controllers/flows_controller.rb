@@ -1,5 +1,6 @@
 class FlowsController < ApplicationController
   before_action :set_flow, only: %i[ show edit update destroy ]
+  layout "authenticated"
 
   # GET /flows or /flows.json
   def index
