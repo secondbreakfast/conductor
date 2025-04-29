@@ -11,7 +11,8 @@ module PromptRunner
       def create_image
         params = {
           prompt: prompt_run.run.message,
-          model: prompt_run.prompt.selected_model
+          model: prompt_run.prompt.selected_model,
+          size: "512x512"
         }
 
         if subject_image
