@@ -60,7 +60,7 @@ export default class extends Controller {
         this.hideAllFieldsExcept(["endpointType", "selectedProvider", "selectedModel", "systemPrompt", "tools", "flowId"])
       } else if (origEndpointType === "ImageToImage") {
         this.hideAllFieldsExcept([
-          "endpointType", "selectedProvider", "selectedModel", "action",
+          "endpointType", "selectedProvider", "selectedModel", "action", "systemPrompt",
           "subjectImage", "backgroundPrompt", "backgroundReference", 
           "lightSourceDirection", "lightSourceStrength", "foregroundPrompt", 
           "negativePrompt", "preserveOriginalSubject", "originalBackgroundDepth", 
@@ -109,7 +109,7 @@ export default class extends Controller {
       
       // For ImageToImage, show all fields except those specific to Chat
       this.hideAllFieldsExcept([
-        "endpointType", "selectedProvider", "selectedModel", "action",
+        "endpointType", "selectedProvider", "selectedModel", "action", "systemPrompt",
         "subjectImage", "backgroundPrompt", "backgroundReference", 
         "lightSourceDirection", "lightSourceStrength", "foregroundPrompt", 
         "negativePrompt", "preserveOriginalSubject", "originalBackgroundDepth", 

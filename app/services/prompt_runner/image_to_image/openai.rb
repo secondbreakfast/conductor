@@ -10,7 +10,7 @@ module PromptRunner
 
       def create_image
         params = {
-          prompt: prompt_run.run.message,
+          prompt: prompt_run.prompt.system_prompt.present? ? "#{prompt_run.prompt.system_prompt}\n\n#{prompt_run.run.message}" : prompt_run.run.message,
           model: prompt_run.prompt.selected_model,
           size: "512x512"
         }
@@ -19,7 +19,7 @@ module PromptRunner
           # Download the image to a temporary file
           Tempfile.open([ "subject_image", ".jpg" ]) do |file|
             file.binmode
-            file.write(URI.open(Rails.application.routes.url_helpers.rails_blob_url(subject_image, only_path: false, host: ENV["HOST_URL"] || "http://localhost:3000")).read)
+            file.write(URI.open(Rails.application.routes.url_helpers.rails_blob_url(subject_image, only_path: false, host: "http://localhost:3000")).read)
             file.rewind
 
             # Pass the file path to the image parameter
