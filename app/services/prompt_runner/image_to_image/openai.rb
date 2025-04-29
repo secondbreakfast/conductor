@@ -10,9 +10,8 @@ module PromptRunner
 
       def create_image
         params = {
-          prompt: prompt_run.prompt.system_prompt.present? ? "#{prompt_run.prompt.system_prompt}\n\n#{prompt_run.run.message}" : prompt_run.run.message,
-          model: prompt_run.prompt.selected_model,
-          size: "512x512"
+          prompt: prompt_run.run.message,
+          model: prompt_run.prompt.selected_model
         }
 
         if subject_image
