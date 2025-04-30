@@ -17,11 +17,14 @@ class PromptRun < ApplicationRecord
     if prompt.endpoint_type == "Chat"
       perform
     else
+      # perform_later
+      puts "Performing prompt run: 'perform!'"
       perform_later
     end
   end
 
   def perform
+    puts "Performing prompt run: 'perform'"
     Runner.run(self)
   end
 

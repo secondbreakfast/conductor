@@ -5,10 +5,12 @@ module PromptRunner
       require "tempfile"
 
       def run
+        puts "Running OpenAI image to image"
         create_image
       end
 
       def create_image
+        puts "Creating image"
         params = {
           prompt: prompt_run.run.message,
           model: prompt_run.prompt.selected_model
@@ -25,13 +27,19 @@ module PromptRunner
             params[:image] = file.path
 
             # Call the OpenAI API
+            puts "Calling OpenAI API"
             result = client.images.edit(parameters: params)
+            puts "Result: #{result}"
             handle_result(result)
           end
         else
           result = client.images.generate(parameters: params)
           handle_result(result)
         end
+      rescue => e
+        puts "Error: #{e.message}"
+        prompt_run.update_with_status!("failed")
+        Rails.logger.error("Image creation failed: #{e.message}")
       end
 
       def handle_result(result)
