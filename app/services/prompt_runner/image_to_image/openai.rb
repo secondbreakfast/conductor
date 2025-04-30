@@ -12,7 +12,7 @@ module PromptRunner
       def create_image
         puts "Creating image"
         params = {
-          prompt: prompt_run.run.message,
+          prompt: prompt_run.prompt.system_prompt.present? ? "#{prompt_run.prompt.system_prompt}\n\n#{prompt_run.run.message}" : prompt_run.run.message,
           model: prompt_run.prompt.selected_model
         }
 
