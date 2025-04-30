@@ -17,10 +17,12 @@ module PromptRunner
         }
 
         if subject_image
+          attachment_url = Rails.application.routes.url_helpers.rails_blob_url(subject_image, only_path: false, host: ENV["HOST_URL"] || "http://localhost:3000")
+          puts "Attachment URL: #{attachment_url}"
           # Download the image to a temporary file
           Tempfile.open([ "subject_image", ".jpg" ]) do |file|
             file.binmode
-            file.write(URI.open(Rails.application.routes.url_helpers.rails_blob_url(subject_image, only_path: false, host: ENV["HOST_URL"] || "http://localhost:3000")).read)
+            file.write(URI.open(attachment_url).read)
             file.rewind
 
             # Pass the file path to the image parameter
