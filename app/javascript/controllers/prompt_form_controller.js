@@ -6,7 +6,8 @@ export default class extends Controller {
                     "backgroundPrompt", "backgroundReference", "lightSourceDirection", 
                     "lightSourceStrength", "foregroundPrompt", "negativePrompt", 
                     "preserveOriginalSubject", "originalBackgroundDepth", 
-                    "keepOriginalBackground", "seed", "outputFormat", "action"]
+                    "keepOriginalBackground", "seed", "outputFormat", "action", 
+                    "size", "quality"]
 
   connect() {
     // Store original values first before we modify the dropdowns
@@ -64,7 +65,7 @@ export default class extends Controller {
           "subjectImage", "backgroundPrompt", "backgroundReference", 
           "lightSourceDirection", "lightSourceStrength", "foregroundPrompt", 
           "negativePrompt", "preserveOriginalSubject", "originalBackgroundDepth", 
-          "keepOriginalBackground", "seed", "outputFormat", "flowId"
+          "keepOriginalBackground", "seed", "outputFormat", "flowId", "size", "quality"
         ])
       }
     } else {
@@ -113,7 +114,7 @@ export default class extends Controller {
         "subjectImage", "backgroundPrompt", "backgroundReference", 
         "lightSourceDirection", "lightSourceStrength", "foregroundPrompt", 
         "negativePrompt", "preserveOriginalSubject", "originalBackgroundDepth", 
-        "keepOriginalBackground", "seed", "outputFormat", "flowId"
+        "keepOriginalBackground", "seed", "outputFormat", "flowId", "size", "quality"
       ])
     } else {
       // If no selection, just show the endpoint type dropdown

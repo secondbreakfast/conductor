@@ -13,7 +13,9 @@ module PromptRunner
         puts "Creating image"
         params = {
           prompt: prompt_run.prompt.system_prompt.present? ? "#{prompt_run.prompt.system_prompt}\n\n#{prompt_run.run.message}" : prompt_run.run.message,
-          model: prompt_run.prompt.selected_model
+          model: prompt_run.prompt.selected_model,
+          quality: prompt_run.prompt.quality || "auto",
+          size: prompt_run.prompt.size || "1024x1024"
         }
 
         if subject_image
