@@ -20,6 +20,7 @@ module PromptRunner
 
         if subject_image
           attachment_url = Rails.application.routes.url_helpers.rails_blob_url(subject_image, only_path: false, host: ENV["HOST_URL"] || "http://localhost:3000")
+          background_reference_url = Rails.application.routes.url_helpers.rails_blob_url(background_reference, only_path: false, host: ENV["HOST_URL"] || "http://localhost:3000")
           puts "Attachment URL: #{attachment_url}"
           # Download the image to a temporary file
           Tempfile.open([ "subject_image", ".jpg" ]) do |file|
@@ -28,7 +29,13 @@ module PromptRunner
             file.rewind
 
             # Pass the file path to the image parameter
-            params[:image] = file.path
+
+            Tempfile.open([ "background_reference", ".jpg" ]) do |background_file|
+              background_file.binmode
+              background_file.write(URI.open(background_reference_url).read)
+              background_file.rewind
+              params[:image] = [ file.path, background_file.path ]
+            end
 
             # Call the OpenAI API
             puts "Calling OpenAI API"
@@ -81,6 +88,16 @@ module PromptRunner
           prompt_run.run.subject_image
         elsif prompt.subject_image.attached?
           prompt.subject_image
+        else
+          nil
+        end
+      end
+
+      def background_reference
+        if prompt_run.run.background_reference.attached?
+          prompt_run.run.background_reference
+        elsif prompt.background_reference.attached?
+          prompt.background_reference
         else
           nil
         end

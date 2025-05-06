@@ -74,5 +74,5 @@ gem "rack-cors"
 gem "anthropic"
 # Use the feat/multi-image branch of ruby-openai until it's released on Rubygems
 gem "ruby-openai",
-    git:    "https://github.com/ruby-openai/ruby-openai.git",
+    git:    "https://github.com/alexrudall/ruby-openai.git",
     branch: "feat/multi-image"
