@@ -14,31 +14,13 @@ module PromptRunner
         params = {
           prompt: prompt_run.prompt.system_prompt.present? ? "#{prompt_run.prompt.system_prompt}\n\n#{prompt_run.run.message}" : prompt_run.run.message,
           model: prompt_run.prompt.selected_model,
-          quality: prompt_run.prompt.quality || "auto",
-          size: prompt_run.prompt.size || "1024x1024"
+          quality: prompt_run.prompt.quality.present? ? prompt_run.prompt.quality : "auto",
+          size: prompt_run.prompt.size.present? ? prompt_run.prompt.size : "1024x1024"
         }
 
-        if subject_image
-          attachment_url = Rails.application.routes.url_helpers.rails_blob_url(subject_image, only_path: false, host: ENV["HOST_URL"] || "http://localhost:3000")
-          background_reference_url = Rails.application.routes.url_helpers.rails_blob_url(background_reference, only_path: false, host: ENV["HOST_URL"] || "http://localhost:3000")
-          puts "Attachment URL: #{attachment_url}"
-          # Download the image to a temporary file
-          Tempfile.open([ "subject_image", ".jpg" ]) do |file|
-            file.binmode
-            file.write(URI.open(attachment_url).read)
-            file.rewind
-
-            # Pass the file path to the image parameter
-
-            Tempfile.open([ "background_reference", ".jpg" ]) do |background_file|
-              background_file.binmode
-              background_file.write(URI.open(background_reference_url).read)
-              background_file.rewind
-              params[:image] = [ file.path, background_file.path ]
-            end
-
-            # Call the OpenAI API
-            puts "Calling OpenAI API"
+        if input_attachments.any?
+          with_open_blobs(input_attachments) do |files|
+            params[:image] = files
             result = client.images.edit(parameters: params)
             puts "Result: #{result}"
             handle_result(result)
@@ -83,6 +65,10 @@ module PromptRunner
         @client ||= ::OpenAI::Client.new(access_token: Rails.application.credentials.openai_api_key)
       end
 
+      def input_attachments
+        [subject_image, *prompt_run.run.attachments, *prompt.attachments].compact.take(4)
+      end
+
       def subject_image
         if prompt_run.run.subject_image.attached?
           prompt_run.run.subject_image
@@ -100,6 +86,23 @@ module PromptRunner
           prompt.background_reference
         else
           nil
+        end
+      end
+
+      def with_open_blobs(attachments, &block)
+        open_first_blob(attachments, [], &block)
+      end
+
+      def open_first_blob(remaining_attachments, opened_files, &block)
+        if remaining_attachments.empty?
+          # All files are open, call the block with all files
+          yield opened_files
+        else
+          # Open the next file and continue recursively
+          attachment = remaining_attachments.first
+          attachment.blob.open do |file|
+            open_first_blob(remaining_attachments[1..-1], opened_files + [ file ], &block)
+          end
         end
       end
     end

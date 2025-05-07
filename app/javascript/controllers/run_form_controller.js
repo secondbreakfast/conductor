@@ -7,7 +7,8 @@ export default class extends Controller {
     "inputImageUrl", 
     "subjectImage", 
     "subjectVideo", 
-    "backgroundReference"
+    "backgroundReference",
+    "attachments"
   ]
 
   connect() {
@@ -16,7 +17,7 @@ export default class extends Controller {
       this.fetchPromptEndpointType()
     }
     
-    this.hideAllFieldsExcept(["flowId", "message", "inputImageUrl", "subjectImage"])
+    this.hideAllFieldsExcept(["flowId", "message", "inputImageUrl", "subjectImage", "attachments"])
   }
 
   onFlowChange() {
@@ -24,7 +25,7 @@ export default class extends Controller {
       this.fetchPromptEndpointType()
     } else {
       // If no flow is selected, hide all fields except the basic ones
-      this.hideAllFieldsExcept(["flowId", "message", "inputImageUrl", "subjectImage"])
+      this.hideAllFieldsExcept(["flowId", "message", "inputImageUrl", "subjectImage", "attachments"])
     }
   }
 
@@ -46,7 +47,7 @@ export default class extends Controller {
   updateVisibleFields(flowData) {
     if (!flowData.prompts || flowData.prompts.length === 0) {
       // If there are no prompts, show default fields
-      this.hideAllFieldsExcept(["flowId", "message", "inputImageUrl", "subjectImage"])
+      this.hideAllFieldsExcept(["flowId", "message", "inputImageUrl", "subjectImage", "attachments"])
       return
     }
     
@@ -63,7 +64,8 @@ export default class extends Controller {
         "inputImageUrl", 
         "subjectImage", 
         "subjectVideo", 
-        "backgroundReference"
+        "backgroundReference",
+        "attachments"
       ])
     } else {
       // Show fields for Chat
@@ -71,7 +73,8 @@ export default class extends Controller {
         "flowId", 
         "message", 
         "inputImageUrl", 
-        "subjectImage"
+        "subjectImage",
+        "attachments"
       ])
     }
   }

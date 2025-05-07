@@ -5,6 +5,8 @@ class Prompt < ApplicationRecord
   has_one_attached :subject_image
   has_one_attached :background_reference
 
+  has_many_attached :attachments
+
   # endpoint_type:  Chat | ImageToImage | ImageToVideo | AudioToText | TextToAudio
   # selected_provider: OpenAI | Stability | Replicate | Anthropic
   # selected_model

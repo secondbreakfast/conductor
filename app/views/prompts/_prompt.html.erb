@@ -20,6 +20,10 @@
     <%= image_tag prompt.subject_image, class: "w-full" if prompt.subject_image.present? %>
   </p>
   <p class="my-5">
+    <strong class="block font-medium mb-1">Attachments:</strong>
+    <%= prompt.attachments.map { |attachment| image_tag attachment, class: "w-full" }.join.html_safe %>
+  </p>
+  <p class="my-5">
     <strong class="block font-medium mb-1">Background prompt:</strong>
     <%= prompt.background_prompt %>
   </p>

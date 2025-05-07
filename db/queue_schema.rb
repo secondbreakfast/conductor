@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_03_003823) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_06_180946) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -149,6 +149,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_03_003823) do
     t.string "webhook_url"
     t.text "message"
     t.bigint "conversation_id"
+    t.jsonb "attachment_urls", default: []
     t.index ["conversation_id"], name: "index_runs_on_conversation_id"
     t.index ["flow_id"], name: "index_runs_on_flow_id"
   end
