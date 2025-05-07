@@ -6,7 +6,8 @@ export default class extends Controller {
                     "backgroundPrompt", "backgroundReference", "lightSourceDirection", 
                     "lightSourceStrength", "foregroundPrompt", "negativePrompt", 
                     "preserveOriginalSubject", "originalBackgroundDepth", 
-                    "keepOriginalBackground", "seed", "outputFormat", "action"]
+                    "keepOriginalBackground", "seed", "outputFormat", "action", 
+                    "size", "quality", "attachments"]
 
   connect() {
     // Store original values first before we modify the dropdowns
@@ -57,19 +58,19 @@ export default class extends Controller {
       
       // Show the appropriate fields based on the endpoint type
       if (origEndpointType === "Chat") {
-        this.hideAllFieldsExcept(["endpointType", "selectedProvider", "selectedModel", "systemPrompt", "tools", "flowId"])
+        this.hideAllFieldsExcept(["endpointType", "selectedProvider", "selectedModel", "systemPrompt", "tools", "flowId", "attachments"])
       } else if (origEndpointType === "ImageToImage") {
         this.hideAllFieldsExcept([
           "endpointType", "selectedProvider", "selectedModel", "action", "systemPrompt",
           "subjectImage", "backgroundPrompt", "backgroundReference", 
           "lightSourceDirection", "lightSourceStrength", "foregroundPrompt", 
           "negativePrompt", "preserveOriginalSubject", "originalBackgroundDepth", 
-          "keepOriginalBackground", "seed", "outputFormat", "flowId"
+          "keepOriginalBackground", "seed", "outputFormat", "flowId", "size", "quality", "attachments"
         ])
       }
     } else {
       // If creating a new record, just hide all fields except endpoint type
-      this.hideAllFieldsExcept(["endpointType"])
+      this.hideAllFieldsExcept(["endpointType", "attachments"])
     }
   }
 
@@ -95,7 +96,7 @@ export default class extends Controller {
       
       // For Chat, only show system_prompt, tools, flow_id
       // Note: make sure action field is not included in the list
-      this.hideAllFieldsExcept(["endpointType", "selectedProvider", "selectedModel", "systemPrompt", "tools", "flowId"])
+      this.hideAllFieldsExcept(["endpointType", "selectedProvider", "selectedModel", "systemPrompt", "tools", "flowId", "attachments"])
       
     } else if (endpointType === "ImageToImage") {
       // For ImageToImage, only offer Stability provider
@@ -113,11 +114,11 @@ export default class extends Controller {
         "subjectImage", "backgroundPrompt", "backgroundReference", 
         "lightSourceDirection", "lightSourceStrength", "foregroundPrompt", 
         "negativePrompt", "preserveOriginalSubject", "originalBackgroundDepth", 
-        "keepOriginalBackground", "seed", "outputFormat", "flowId"
+        "keepOriginalBackground", "seed", "outputFormat", "flowId", "size", "quality", "attachments"
       ])
     } else {
       // If no selection, just show the endpoint type dropdown
-      this.hideAllFieldsExcept(["endpointType"])
+      this.hideAllFieldsExcept(["endpointType", "attachments"])
     }
     
     // Update model options based on the new provider

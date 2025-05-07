@@ -66,6 +66,6 @@ class PromptsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def prompt_params
-      params.require(:prompt).permit(:background_prompt, :light_source_direction, :light_source_strength, :foreground_prompt, :negative_prompt, :preserve_original_subject, :original_background_depth, :keep_original_background, :seed, :output_format, :flow_id, :subject_image, :background_reference, :action, :endpoint_type, :selected_provider, :selected_model, :system_prompt, :tools)
+      params.require(:prompt).permit(:background_prompt, :light_source_direction, :light_source_strength, :foreground_prompt, :negative_prompt, :preserve_original_subject, :original_background_depth, :keep_original_background, :seed, :output_format, :flow_id, :subject_image, :background_reference, :action, :endpoint_type, :selected_provider, :selected_model, :system_prompt, :tools, :quality, :size, attachments: [])
     end
 end
