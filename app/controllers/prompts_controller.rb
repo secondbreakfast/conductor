@@ -66,6 +66,10 @@ class PromptsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def prompt_params
-      params.require(:prompt).permit(:background_prompt, :light_source_direction, :light_source_strength, :foreground_prompt, :negative_prompt, :preserve_original_subject, :original_background_depth, :keep_original_background, :seed, :output_format, :flow_id, :subject_image, :background_reference, :action, :endpoint_type, :selected_provider, :selected_model, :system_prompt, :tools, :quality, :size, attachments: [])
+      permitted = params.require(:prompt).permit(:background_prompt, :light_source_direction, :light_source_strength, :foreground_prompt, :negative_prompt, :preserve_original_subject, :original_background_depth, :keep_original_background, :seed, :output_format, :flow_id, :subject_image, :background_reference, :action, :endpoint_type, :selected_provider, :selected_model, :system_prompt, :tools, :quality, :size, attachments: [])
+
+      # Only include attachments param if it's explicitly present in the request
+      permitted.delete(:attachments) if params[:prompt][:attachments].nil?
+      permitted
     end
 end
