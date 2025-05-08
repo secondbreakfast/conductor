@@ -105,10 +105,30 @@ module PromptRunner
       end
 
       def input
-        {
+        messages = []
+
+        # Add system prompt if it exists
+        if prompt_run.prompt.system_prompt.present?
+          messages << {
+            role: "system",
+            content: render_template(prompt_run.prompt.system_prompt)
+          }
+        end
+
+        # Add user message
+        messages << {
           role: "user",
           content: input_content
         }
+
+        messages
+      end
+
+      # Render template with variables using Mustache
+      def render_template(template)
+        return template unless prompt_run.run.variables.present?
+
+        Mustache.render(template, prompt_run.run.variables.deep_symbolize_keys)
       end
 
       def input_content
@@ -117,15 +137,15 @@ module PromptRunner
         if prompt_run.run.message.present?
           contents << {
             type: "input_text",
-            text: prompt_run.run.message
+            text: render_template(prompt_run.run.message)
           }
         end
 
-        if prompt_run.run.subject_image.attached?
+        if attachment = attachments.first
           contents << {
             type: "input_image",
             image_url: Rails.application.routes.url_helpers.rails_blob_url(
-              prompt_run.run.subject_image,
+              attachment,
               only_path: false,
               host: ENV["HOST_URL"] || "http://localhost:3000"
             )
@@ -133,6 +153,24 @@ module PromptRunner
         end
 
         contents
+      end
+
+      def attachments
+        [ subject_image, *prompt_run.run.attachments, *prompt.attachments ].compact
+      end
+
+      def subject_image
+        if prompt_run.run.subject_image.attached?
+          prompt_run.run.subject_image
+        elsif prompt.subject_image.attached?
+          prompt.subject_image
+        else
+          nil
+        end
+      end
+
+      def prompt
+        prompt_run.prompt
       end
 
       def formatted_content

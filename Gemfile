@@ -76,3 +76,5 @@ gem "anthropic"
 gem "ruby-openai",
     git:    "https://github.com/alexrudall/ruby-openai.git",
     branch: "feat/multi-image"
+
+gem "mustache"

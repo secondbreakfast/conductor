@@ -9,6 +9,10 @@ export default class extends Controller {
                     "keepOriginalBackground", "seed", "outputFormat", "action", 
                     "size", "quality", "attachments"]
 
+  static values = {
+    modelOptions: Object
+  }
+
   connect() {
     // Store original values first before we modify the dropdowns
     const origEndpointType = this.endpointTypeTarget.value
@@ -133,50 +137,18 @@ export default class extends Controller {
     // Reset model selection
     this.selectedModelTarget.innerHTML = '<option value="">Select a model</option>'
     
-    if (endpointType === "Chat" && selectedProvider === "Anthropic") {
-      // For Chat with Anthropic, offer claude models
-      this.selectedModelTarget.innerHTML += '<option value="claude-3-sonnet-20240229">claude-3-sonnet-20240229</option>'
-      this.selectedModelTarget.innerHTML += '<option value="claude-3-opus-20240229">claude-3-opus-20240229</option>'
-      this.selectedModelTarget.innerHTML += '<option value="claude-3-haiku-20240307">claude-3-haiku-20240307</option>'
+    if (endpointType && selectedProvider && this.modelOptionsValue) {
+      const endpointKey = endpointType.toLowerCase().replace('to', '_to_')
+      const providerKey = selectedProvider.toLowerCase()
+      
+      const models = this.modelOptionsValue[endpointKey]?.[providerKey]?.models || []
+      
+      models.forEach(model => {
+        this.selectedModelTarget.innerHTML += `<option value="${model}">${model}</option>`
+      })
       
       // Restore model selection if valid
-      if (currentModel === "claude-3-sonnet-20240229" || 
-          currentModel === "claude-3-opus-20240229" || 
-          currentModel === "claude-3-haiku-20240307") {
-        this.selectedModelTarget.value = currentModel
-      }
-    } else if (endpointType === "Chat" && selectedProvider === "Openai") {
-      // For Chat with OpenAI, offer GPT models
-      this.selectedModelTarget.innerHTML += '<option value="gpt-4-turbo">gpt-4-turbo</option>'
-      this.selectedModelTarget.innerHTML += '<option value="gpt-4o">gpt-4o</option>'
-      this.selectedModelTarget.innerHTML += '<option value="gpt-4-vision-preview">gpt-4-vision-preview</option>'
-      this.selectedModelTarget.innerHTML += '<option value="gpt-3.5-turbo">gpt-3.5-turbo</option>'
-      
-      // Restore model selection if valid
-      if (currentModel === "gpt-4-turbo" || 
-          currentModel === "gpt-4o" || 
-          currentModel === "gpt-4-vision-preview" || 
-          currentModel === "gpt-3.5-turbo") {
-        this.selectedModelTarget.value = currentModel
-      }
-    } else if (endpointType === "ImageToImage" && selectedProvider === "Stability") {
-      // For ImageToImage with Stability, offer replace_background_and_relight
-      this.selectedModelTarget.innerHTML += '<option value="replace_background_and_relight">replace_background_and_relight</option>'
-      
-      // Restore model selection if valid
-      if (currentModel === "replace_background_and_relight") {
-        this.selectedModelTarget.value = currentModel
-      }
-    } else if (endpointType === "ImageToImage" && selectedProvider === "Openai") {
-      // For ImageToImage with OpenAI, offer GPT models
-      this.selectedModelTarget.innerHTML += '<option value="gpt-image-1">gpt-image-1</option>'
-      this.selectedModelTarget.innerHTML += '<option value="dall-e-3">dall-e-3</option>'
-      this.selectedModelTarget.innerHTML += '<option value="dall-e-2">dall-e-2</option>'
-
-      // Restore model selection if valid
-      if (currentModel === "gpt-image-1" || 
-          currentModel === "dall-e-3" || 
-          currentModel === "dall-e-2") {
+      if (models.includes(currentModel)) {
         this.selectedModelTarget.value = currentModel
       }
     }

@@ -16,6 +16,12 @@ class Run < ApplicationRecord
   after_create :attach_input_attachments!
   after_create :perform!
 
+  # setters
+
+  def variables_string=(json_string)
+    self.variables = JSON.parse(json_string) if json_string.present?
+  end
+
   # actions
 
   def trigger_webhook!
