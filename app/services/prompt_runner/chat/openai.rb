@@ -105,12 +105,30 @@ module PromptRunner
       end
 
       def input
-        [
-          {
-            role: "user",
-            content: input_content
+        messages = []
+
+        # Add system prompt if it exists
+        if prompt_run.prompt.system_prompt.present?
+          messages << {
+            role: "system",
+            content: render_template(prompt_run.prompt.system_prompt)
           }
-        ]
+        end
+
+        # Add user message
+        messages << {
+          role: "user",
+          content: input_content
+        }
+
+        messages
+      end
+
+      # Render template with variables using Mustache
+      def render_template(template)
+        return template unless prompt_run.run.variables.present?
+
+        Mustache.render(template, prompt_run.run.variables.deep_symbolize_keys)
       end
 
       def input_content
@@ -119,7 +137,7 @@ module PromptRunner
         if prompt_run.run.message.present?
           contents << {
             type: "input_text",
-            text: prompt_run.run.message
+            text: render_template(prompt_run.run.message)
           }
         end
 

@@ -218,6 +218,11 @@
     </div>
 
     <div>
+      <h2 class="text-base font-semibold text-gray-900">Variables</h2>
+      <pre class="mt-4 text-sm text-gray-900 whitespace-pre-wrap"><%= JSON.pretty_generate(@run.variables) %></pre>
+    </div>
+
+    <div>
       <h2 class="text-base font-semibold text-gray-900">Prompts</h2>
       <div class="mt-4 space-y-4">
         <% @run.prompt_runs.each do |prompt_run| %>

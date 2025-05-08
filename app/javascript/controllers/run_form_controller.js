@@ -8,7 +8,8 @@ export default class extends Controller {
     "subjectImage", 
     "subjectVideo", 
     "backgroundReference",
-    "attachments"
+    "attachments",
+    "variables"
   ]
 
   connect() {
@@ -17,7 +18,7 @@ export default class extends Controller {
       this.fetchPromptEndpointType()
     }
     
-    this.hideAllFieldsExcept(["flowId", "message", "inputImageUrl", "subjectImage", "attachments"])
+    this.hideAllFieldsExcept(["flowId", "message", "inputImageUrl", "subjectImage", "variables", "attachments"])
   }
 
   onFlowChange() {
@@ -25,7 +26,7 @@ export default class extends Controller {
       this.fetchPromptEndpointType()
     } else {
       // If no flow is selected, hide all fields except the basic ones
-      this.hideAllFieldsExcept(["flowId", "message", "inputImageUrl", "subjectImage", "attachments"])
+      this.hideAllFieldsExcept(["flowId", "message", "inputImageUrl", "subjectImage", "variables", "attachments"])
     }
   }
 
@@ -47,7 +48,7 @@ export default class extends Controller {
   updateVisibleFields(flowData) {
     if (!flowData.prompts || flowData.prompts.length === 0) {
       // If there are no prompts, show default fields
-      this.hideAllFieldsExcept(["flowId", "message", "inputImageUrl", "subjectImage", "attachments"])
+      this.hideAllFieldsExcept(["flowId", "message", "inputImageUrl", "subjectImage", "variables", "attachments"])
       return
     }
     
@@ -65,6 +66,7 @@ export default class extends Controller {
         "subjectImage", 
         "subjectVideo", 
         "backgroundReference",
+        "variables",
         "attachments"
       ])
     } else {
@@ -74,6 +76,7 @@ export default class extends Controller {
         "message", 
         "inputImageUrl", 
         "subjectImage",
+        "variables",
         "attachments"
       ])
     }

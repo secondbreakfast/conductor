@@ -28,4 +28,26 @@ class Prompt < ApplicationRecord
       super(value)
     end
   end
+
+  # model options
+  def self.model_options
+    {
+      chat: {
+        openai: {
+          models: [ "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano", "gpt-4o", "gpt-4o-mini", "gpt-4o-2024-08-06" ]
+        },
+        anthropic: {
+          models: [ "claude-3-5-sonnet-20240620", "claude-3-7-sonnet" ]
+        }
+      },
+      image_to_image: {
+        openai: {
+          models: [ "gpt-image-1", "dall-e-3", "dall-e-2" ]
+        },
+        stability: {
+          models: [ "replace_background_and_relight" ]
+        }
+      }
+    }
+  end
 end

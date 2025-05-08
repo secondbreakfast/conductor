@@ -88,6 +88,19 @@
     %>
   </div>
 
+  <div class="my-5" data-run-form-target="variablesContainer">
+    <%= form.label :variables, "Variables (JSON format)" %>
+    <%= form.text_area :variables_string, 
+      rows: 4, 
+      placeholder: '{"key1": "value1", "key2": "value2"}',
+      class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", 
+              {"border-gray-400 focus:outline-blue-600": run.errors[:variables].none?, 
+               "border-red-400 focus:outline-red-600": run.errors[:variables].any?}],
+      data: { run_form_target: "variables" },
+      value: run.variables.present? ? JSON.pretty_generate(run.variables) : ''
+    %>
+  </div>
+
   <div class="my-5">
     <%= form.label :attachments %>
     <%= form.file_field :attachments, 
