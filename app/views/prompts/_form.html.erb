@@ -56,11 +56,28 @@
       <%= form.select :selected_model, 
         options_for_select(
           if prompt.endpoint_type && prompt.selected_provider
-            endpoint_type = prompt.endpoint_type.downcase.to_sym
-            provider = prompt.selected_provider.downcase.to_sym
+            endpoint_key = case prompt.endpoint_type
+                          when "Chat"
+                            :chat
+                          when "ImageToImage"
+                            :image_to_image
+                          else
+                            prompt.endpoint_type.downcase.to_sym
+                          end
             
-            if Prompt.model_options[endpoint_type]&.dig(provider, :models)
-              Prompt.model_options[endpoint_type][provider][:models].map { |model| [model, model] }
+            provider_key = case prompt.selected_provider
+                          when "Anthropic"
+                            :anthropic
+                          when "Openai"
+                            :openai
+                          when "Stability"
+                            :stability
+                          else
+                            prompt.selected_provider.downcase.to_sym
+                          end
+            
+            if Prompt.model_options[endpoint_key]&.dig(provider_key, :models)
+              Prompt.model_options[endpoint_key][provider_key][:models].map { |model| [model, model] }
             else
               []
             end

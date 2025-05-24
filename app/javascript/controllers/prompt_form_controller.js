@@ -108,7 +108,7 @@ export default class extends Controller {
       this.selectedProviderTarget.innerHTML += '<option value="Openai">OpenAI</option>'
       
       // Restore provider selection if valid
-      if (currentProvider === "Stability") {
+      if (currentProvider === "Stability" || currentProvider === "Openai") {
         this.selectedProviderTarget.value = currentProvider
       }
       
@@ -138,8 +138,27 @@ export default class extends Controller {
     this.selectedModelTarget.innerHTML = '<option value="">Select a model</option>'
     
     if (endpointType && selectedProvider && this.modelOptionsValue) {
-      const endpointKey = endpointType.toLowerCase().replace('to', '_to_')
-      const providerKey = selectedProvider.toLowerCase()
+      // Fix the endpoint key transformation
+      let endpointKey
+      if (endpointType === "Chat") {
+        endpointKey = "chat"
+      } else if (endpointType === "ImageToImage") {
+        endpointKey = "image_to_image"
+      } else {
+        endpointKey = endpointType.toLowerCase()
+      }
+      
+      // Fix the provider key transformation
+      let providerKey
+      if (selectedProvider === "Anthropic") {
+        providerKey = "anthropic"
+      } else if (selectedProvider === "Openai") {
+        providerKey = "openai"
+      } else if (selectedProvider === "Stability") {
+        providerKey = "stability"
+      } else {
+        providerKey = selectedProvider.toLowerCase()
+      }
       
       const models = this.modelOptionsValue[endpointKey]?.[providerKey]?.models || []
       
