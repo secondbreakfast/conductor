@@ -44,10 +44,14 @@ module PromptRunner
           # Upload to ActiveStorage
           prompt_run.attachments.attach(io: image_file, filename: "generated_image.png", content_type: "image/png")
 
-          # Update prompt_run with the response
+          # Create a copy of the result and remove the large base64 data to save database space
+          result_for_db = result.deep_dup
+          result_for_db["data"].each { |data_item| data_item["b64_json"] = "" if data_item["b64_json"] }
+
+          # Update prompt_run with the response (without the large base64 data)
           prompt_run.update!(
             response: {
-              body: result,
+              body: result_for_db,
               status: "completed",
               error: nil
             }
@@ -66,7 +70,7 @@ module PromptRunner
       end
 
       def input_attachments
-        [subject_image, *prompt_run.run.attachments, *prompt.attachments].compact.take(4)
+        [ subject_image, *prompt_run.run.attachments, *prompt.attachments ].compact.take(4)
       end
 
       def subject_image
