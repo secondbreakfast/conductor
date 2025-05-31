@@ -44,10 +44,14 @@ module PromptRunner
           # Upload to ActiveStorage
           prompt_run.attachments.attach(io: image_file, filename: "generated_image.png", content_type: "image/png")
 
-          # Update prompt_run with the response
+          # Create a copy of result without the b64_json data
+          result_without_b64 = result.deep_dup
+          result_without_b64["data"].each { |item| item.delete("b64_json") }
+
+          # Update prompt_run with the response (without b64_json)
           prompt_run.update!(
             response: {
-              body: result,
+              body: result_without_b64,
               status: "completed",
               error: nil
             }
