@@ -7,9 +7,9 @@ class RunsController < ApplicationController
   # GET /runs or /runs.json
   def index
     per_page = 5  # Adjust this number based on your needs
-    @runs = Run.order(created_at: :desc)
+    @runs = Run.order(id: :desc)
               .limit(per_page + 1)
-              .where("created_at < ?", params[:after] || Time.current)
+              .where("id < ?", params[:after] || 1000000000000000000)
 
     @has_more = @runs.size > per_page
     @runs = @runs.first(per_page) if @has_more
