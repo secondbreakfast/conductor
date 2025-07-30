@@ -12,7 +12,7 @@ module PromptRunner
       def create_image
         puts "Creating image"
         params = {
-          prompt: prompt_run.prompt.system_prompt.present? ? "#{prompt_run.prompt.system_prompt}\n\n#{prompt_run.run.message}" : prompt_run.run.message,
+          prompt: render_template(prompt_run.prompt.system_prompt.present? ? "#{prompt_run.prompt.system_prompt}\n\n#{prompt_run.run.message}" : prompt_run.run.message),
           model: prompt_run.prompt.selected_model,
           quality: prompt_run.prompt.quality.present? ? prompt_run.prompt.quality : "auto",
           size: prompt_run.prompt.size.present? ? prompt_run.prompt.size : "1024x1024"
@@ -108,6 +108,12 @@ module PromptRunner
             open_first_blob(remaining_attachments[1..-1], opened_files + [ file ], &block)
           end
         end
+      end
+
+      def render_template(template)
+        return template unless prompt_run.run.variables.present?
+
+        Mustache.render(template, prompt_run.run.variables.deep_symbolize_keys)
       end
     end
   end
