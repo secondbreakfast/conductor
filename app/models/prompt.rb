@@ -44,6 +44,9 @@ class Prompt < ApplicationRecord
         openai: {
           models: [ "gpt-image-1", "dall-e-3", "dall-e-2" ]
         },
+        gemini: {
+          models: [ "gemini-2.5-flash-image-preview" ]
+        },
         stability: {
           models: [ "replace_background_and_relight" ]
         }
