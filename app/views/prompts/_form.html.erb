@@ -36,7 +36,7 @@
       <%= form.select :selected_provider, 
         options_for_select(
           prompt.endpoint_type == "Chat" ? [["Anthropic", "Anthropic"], ["OpenAI", "Openai"]] : 
-          prompt.endpoint_type == "ImageToImage" ? [["Stability", "Stability"], ["OpenAI", "Openai"]] : 
+          prompt.endpoint_type == "ImageToImage" ? [["Stability", "Stability"], ["OpenAI", "Openai"], ["Gemini", "Gemini"]] : 
           [], 
           prompt.selected_provider
         ),
@@ -70,6 +70,8 @@
                             :anthropic
                           when "Openai"
                             :openai
+                          when "Gemini"
+                            :gemini
                           when "Stability"
                             :stability
                           else

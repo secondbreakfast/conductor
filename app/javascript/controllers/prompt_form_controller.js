@@ -106,9 +106,10 @@ export default class extends Controller {
       // For ImageToImage, only offer Stability provider
       this.selectedProviderTarget.innerHTML += '<option value="Stability">Stability</option>'
       this.selectedProviderTarget.innerHTML += '<option value="Openai">OpenAI</option>'
+      this.selectedProviderTarget.innerHTML += '<option value="Gemini">Gemini</option>'
       
       // Restore provider selection if valid
-      if (currentProvider === "Stability" || currentProvider === "Openai") {
+      if (currentProvider === "Stability" || currentProvider === "Openai" || currentProvider === "Gemini") {
         this.selectedProviderTarget.value = currentProvider
       }
       
@@ -156,6 +157,8 @@ export default class extends Controller {
         providerKey = "openai"
       } else if (selectedProvider === "Stability") {
         providerKey = "stability"
+      } else if (selectedProvider === "Gemini") {
+        providerKey = "gemini"
       } else {
         providerKey = selectedProvider.toLowerCase()
       }
