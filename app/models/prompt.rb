@@ -50,6 +50,11 @@ class Prompt < ApplicationRecord
         stability: {
           models: [ "replace_background_and_relight" ]
         }
+      },
+      image_to_video: {
+        gemini: {
+          models: [ "veo-3.0-generate-001" ]
+        }
       }
     }
   end

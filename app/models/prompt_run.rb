@@ -55,7 +55,7 @@ class PromptRun < ApplicationRecord
   end
 
   def data
-    if prompt.action == "image_to_video"
+    if prompt.action == "image_to_video" || prompt.endpoint_type == "ImageToVideo"
       {
         video_url: attachments.first.present? ? Rails.application.routes.url_helpers.rails_blob_url(attachments.first, host: "https://conductor-production-662c.up.railway.app") : nil
       }
