@@ -2,6 +2,7 @@ class PromptRun < ApplicationRecord
   belongs_to :prompt
   belongs_to :run
 
+  has_many_attached :source_attachments
   has_many_attached :attachments
 
   has_many :responses, dependent: :destroy
@@ -32,28 +33,37 @@ class PromptRun < ApplicationRecord
     BackgroundRunJob.perform_later(self)
   end
 
-  def poll
-    result = Stability::ApiWrapper.new.get_generation(response.dig("body", "id"))
-    if result.present?
-      attachments.create!(blob: result)
-      puts "Attachments created"
-      puts "Status is: #{status}"
-      update_with_status!("completed")
-      puts "Status is now: #{status}"
-    elsif created_at < 10.minutes.ago
-      update_with_status!("timed-out")
-    else
-      PollRunJob.set(wait: 5.seconds).perform_later(self)
-    end
-  end
-
   def update_with_status!(new_status)
     update!(status: new_status)
     run.perform_next_action_based_on_status!(new_status)
   end
 
+  # helpers
+
+  def input_attachments
+    if source_attachments.any?
+      [ source_attachments, *prompt.attachments ].compact.take(4)
+    else
+      [ subject_image, *run.attachments, *prompt.attachments ].compact.take(4)
+    end
+  end
+
+  def subject_image
+    if run.subject_image.attached?
+      run.subject_image
+    elsif prompt.subject_image.attached?
+      prompt.subject_image
+    else
+      nil
+    end
+  end
+
   def data
     if prompt.action == "image_to_video" || prompt.endpoint_type == "ImageToVideo"
+      {
+        video_url: attachments.first.present? ? Rails.application.routes.url_helpers.rails_blob_url(attachments.first, host: "https://conductor-production-662c.up.railway.app") : nil
+      }
+    elsif prompt.endpoint_type == "VideoToVideo"
       {
         video_url: attachments.first.present? ? Rails.application.routes.url_helpers.rails_blob_url(attachments.first, host: "https://conductor-production-662c.up.railway.app") : nil
       }

@@ -69,6 +69,9 @@ module PromptRunner
       end
 
       def get_first_image_attachment
+        # check for first source image attachment
+        return prompt_run.source_attachments.first if prompt_run.source_attachments.any?
+
         # Check run's subject image first
         return prompt_run.run.subject_image if prompt_run.run.subject_image.attached?
 

@@ -7,7 +7,7 @@ class Prompt < ApplicationRecord
 
   has_many_attached :attachments
 
-  # endpoint_type:  Chat | ImageToImage | ImageToVideo | AudioToText | TextToAudio
+  # endpoint_type:  Chat | ImageToImage | ImageToVideo | VideoToVideo | AudioToText | TextToAudio
   # selected_provider: OpenAI | Stability | Replicate | Anthropic
   # selected_model
   #
@@ -54,6 +54,11 @@ class Prompt < ApplicationRecord
       image_to_video: {
         gemini: {
           models: [ "veo-3.0-generate-001" ]
+        }
+      },
+      video_to_video: {
+        rails: {
+          models: [ "ffmpeg-concat" ]
         }
       }
     }

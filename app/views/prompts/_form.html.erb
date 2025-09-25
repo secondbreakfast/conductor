@@ -19,7 +19,8 @@
         [
           ["Chat", "Chat"],
           ["Image To Image", "ImageToImage"],
-          ["Image To Video", "ImageToVideo"]
+          ["Image To Video", "ImageToVideo"],
+          ["Video To Video", "VideoToVideo"]
         ],
         { include_blank: "Select an endpoint type" },
         { 
@@ -39,6 +40,7 @@
           prompt.endpoint_type == "Chat" ? [["Anthropic", "Anthropic"], ["OpenAI", "Openai"]] : 
           prompt.endpoint_type == "ImageToImage" ? [["Stability", "Stability"], ["OpenAI", "Openai"], ["Gemini", "Gemini"]] : 
           prompt.endpoint_type == "ImageToVideo" ? [["Gemini", "Gemini"]] :
+          prompt.endpoint_type == "VideoToVideo" ? [["Rails", "Rails"]] :
           [], 
           prompt.selected_provider
         ),
@@ -65,6 +67,8 @@
                             :image_to_image
                           when "ImageToVideo"
                             :image_to_video
+                          when "VideoToVideo"
+                            :video_to_video
                           else
                             prompt.endpoint_type.downcase.to_sym
                           end
@@ -78,6 +82,8 @@
                             :gemini
                           when "Stability"
                             :stability
+                          when "Rails"
+                            :rails
                           else
                             prompt.selected_provider.downcase.to_sym
                           end
