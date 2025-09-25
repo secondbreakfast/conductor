@@ -70,17 +70,7 @@ module PromptRunner
       end
 
       def input_attachments
-        [ subject_image, *prompt_run.run.attachments, *prompt.attachments ].compact.take(4)
-      end
-
-      def subject_image
-        if prompt_run.run.subject_image.attached?
-          prompt_run.run.subject_image
-        elsif prompt.subject_image.attached?
-          prompt.subject_image
-        else
-          nil
-        end
+        prompt_run.input_attachments
       end
 
       def background_reference

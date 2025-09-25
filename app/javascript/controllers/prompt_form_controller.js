@@ -71,6 +71,18 @@ export default class extends Controller {
           "negativePrompt", "preserveOriginalSubject", "originalBackgroundDepth", 
           "keepOriginalBackground", "seed", "outputFormat", "flowId", "size", "quality", "attachments"
         ])
+      } else if (origEndpointType === "ImageToVideo") {
+        // ImageToVideo: show minimal fields similar to ImageToImage but without background-specific controls for now
+        this.hideAllFieldsExcept([
+          "endpointType", "selectedProvider", "selectedModel", "systemPrompt",
+          "subjectImage", "negativePrompt", "flowId", "attachments"
+        ])
+      } else if (origEndpointType === "VideoToVideo") {
+        // VideoToVideo: show minimal fields for video stitching
+        this.hideAllFieldsExcept([
+          "endpointType", "selectedProvider", "selectedModel", "systemPrompt",
+          "flowId", "attachments"
+        ])
       }
     } else {
       // If creating a new record, just hide all fields except endpoint type
@@ -121,6 +133,30 @@ export default class extends Controller {
         "negativePrompt", "preserveOriginalSubject", "originalBackgroundDepth", 
         "keepOriginalBackground", "seed", "outputFormat", "flowId", "size", "quality", "attachments"
       ])
+    } else if (endpointType === "ImageToVideo") {
+      // Providers for ImageToVideo: Gemini only currently
+      this.selectedProviderTarget.innerHTML += '<option value="Gemini">Gemini</option>'
+
+      if (currentProvider === "Gemini") {
+        this.selectedProviderTarget.value = currentProvider
+      }
+
+      this.hideAllFieldsExcept([
+        "endpointType", "selectedProvider", "selectedModel", "systemPrompt",
+        "subjectImage", "negativePrompt", "flowId", "attachments"
+      ])
+    } else if (endpointType === "VideoToVideo") {
+      // Providers for VideoToVideo: Rails only currently
+      this.selectedProviderTarget.innerHTML += '<option value="Rails">Rails</option>'
+
+      if (currentProvider === "Rails") {
+        this.selectedProviderTarget.value = currentProvider
+      }
+
+      this.hideAllFieldsExcept([
+        "endpointType", "selectedProvider", "selectedModel", "systemPrompt",
+        "flowId", "attachments"
+      ])
     } else {
       // If no selection, just show the endpoint type dropdown
       this.hideAllFieldsExcept(["endpointType", "attachments"])
@@ -145,6 +181,10 @@ export default class extends Controller {
         endpointKey = "chat"
       } else if (endpointType === "ImageToImage") {
         endpointKey = "image_to_image"
+      } else if (endpointType === "ImageToVideo") {
+        endpointKey = "image_to_video"
+      } else if (endpointType === "VideoToVideo") {
+        endpointKey = "video_to_video"
       } else {
         endpointKey = endpointType.toLowerCase()
       }
@@ -159,6 +199,8 @@ export default class extends Controller {
         providerKey = "stability"
       } else if (selectedProvider === "Gemini") {
         providerKey = "gemini"
+      } else if (selectedProvider === "Rails") {
+        providerKey = "rails"
       } else {
         providerKey = selectedProvider.toLowerCase()
       }

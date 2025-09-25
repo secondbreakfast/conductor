@@ -32,23 +32,54 @@ class Run < ApplicationRecord
 
   def perform!
     update!(started_at: Time.current)
-    flow.prompts.each do |prompt|
-      PromptRun.create!(prompt: prompt, run: self)
+    perform_next_prompt!
+  end
+
+  def perform_next_prompt!
+    unperformed_prompts.limit(1).each do |prompt|
+      if prompt.endpoint_type == "ImageToVideo"
+        input_attachments.each do |attachment|
+          PromptRun.create!(prompt: prompt, run: self, source_attachments: [ attachment.blob ])
+        end
+      else
+        PromptRun.create!(prompt: prompt, run: self)
+      end
     end
+  end
+
+  def perform_next_action_based_on_status!(_new_status)
+    statuses = prompt_runs.pluck(:status)
+    if statuses.all? { |s| s == "completed" }
+      update!(status: "completed", completed_at: Time.current)
+      perform_next_prompt!
+    elsif statuses.any? { |s| s == "failed" }
+      update!(status: "failed")
+    elsif statuses.any? { |s| s == "pending" }
+      update!(status: "pending")
+    end
+    RunWebhookJob.perform_later(self)
   end
 
   def assign_status
     self.status = "pending"
   end
 
+  def unperformed_prompts
+    flow.prompts.order(id: :asc).where.not(id: prompt_runs.pluck(:prompt_id))
+  end
+
   # helpers
+
+  def input_attachments
+    (subject_image.attached? ? [ subject_image ] : []) + attachments.to_a
+  end
 
   def previous_response_id
     nil
   end
 
   def data
-    prompt_runs.map(&:data).reduce({}, :merge)
+    prompt_runs.order(:id).map(&:data).reduce({}, :merge)
   end
 
   def output_attachments
