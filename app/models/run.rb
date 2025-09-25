@@ -40,6 +40,7 @@ class Run < ApplicationRecord
   def perform_next_action_based_on_status!(new_status)
     update!(status: new_status)
     update!(completed_at: Time.current) if new_status == "completed"
+    RunWebhookJob.perform_later(self)
   end
 
   def assign_status
