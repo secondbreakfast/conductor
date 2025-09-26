@@ -165,7 +165,7 @@
           </div>
         <% end %>
 
-        <% @run.prompt_runs.each do |prompt_run| %>
+        <% @run.prompt_runs.order(:id).each do |prompt_run| %>
           <div class="bg-gray-100 rounded-2xl rounded-tl-none px-4 py-2 max-w-xl">
             <% if prompt_run.responses.any? %>
               <div class="space-y-4">
@@ -238,7 +238,7 @@
     <div>
       <h2 class="text-base font-semibold text-gray-900">Prompts</h2>
       <div class="mt-4 space-y-4">
-        <% @run.prompt_runs.each do |prompt_run| %>
+        <% @run.prompt_runs.order(:id).each do |prompt_run| %>
           <div class="space-y-2">
             <%= link_to prompt_run.prompt.id, prompt_path(prompt_run.prompt), class: "block text-sm font-medium text-indigo-600 hover:text-indigo-500" %>
             <% if prompt_run.response.present? %>
