@@ -79,7 +79,7 @@ class Run < ApplicationRecord
   end
 
   def data
-    prompt_runs.order(:id).map(&:data).reduce({}, :merge)
+    self.reload.prompt_runs.order(:id).map(&:data).reduce({}, :merge)
   end
 
   def output_attachments
