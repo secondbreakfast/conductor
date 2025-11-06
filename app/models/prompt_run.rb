@@ -58,6 +58,15 @@ class PromptRun < ApplicationRecord
     end
   end
 
+  def latest_message
+    last_previous_prompt_run = run.prompt_runs.order(:id).where("id < ?", id).last
+    if last_previous_prompt_run.present?
+      last_previous_prompt_run.responses.order(:id).last&.outputs&.order(:id)&.last&.text
+    else
+      run.message
+    end
+  end
+
   def data
     if prompt.action == "image_to_video" || prompt.endpoint_type == "ImageToVideo"
       {

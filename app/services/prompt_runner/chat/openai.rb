@@ -134,10 +134,10 @@ module PromptRunner
       def input_content
         contents = []
 
-        if prompt_run.run.message.present?
+        if prompt_run.latest_message.present?
           contents << {
             type: "input_text",
-            text: render_template(prompt_run.run.message)
+            text: render_template(prompt_run.latest_message)
           }
         end
 
@@ -176,7 +176,7 @@ module PromptRunner
       def formatted_content
         # For text-only messages
         if !prompt_run.run.subject_image.attached?
-          return prompt_run.run.message
+          return prompt_run.latest_message
         end
 
         # For messages with images
@@ -199,7 +199,7 @@ module PromptRunner
         # Add text message
         content << {
           type: "text",
-          text: prompt_run.run.message
+          text: prompt_run.latest_message
         }
 
         content

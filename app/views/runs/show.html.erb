@@ -127,7 +127,7 @@
 
         <% if @run.message.present? %>
           <div class="bg-blue-600 text-white rounded-2xl rounded-tr-none px-4 py-2 max-w-xl">
-            <%= @run.message %>
+            <%= simple_format(@run.message) %>
           </div>
         <% end %>
       </div>
@@ -184,7 +184,7 @@
                   
                   <% response.outputs.each do |output| %>
                     <div class="text-gray-900">
-                      <%= output.text %>
+                      <%= simple_format(output.text) %>
                     </div>
                   <% end %>
                 <% end %>

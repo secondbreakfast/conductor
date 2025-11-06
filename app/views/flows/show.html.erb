@@ -23,7 +23,7 @@
     <h2 class="font-bold text-2xl mb-4">Prompts</h2>
     <% if @flow.prompts.any? %>
       <div class="space-y-8">
-        <% @flow.prompts.each do |prompt| %>
+        <% @flow.prompts.order(:id).each do |prompt| %>
           <div class="bg-white shadow rounded-lg p-6">
             <%= render prompt %>
             <div class="mt-4">
