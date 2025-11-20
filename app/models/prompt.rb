@@ -38,6 +38,9 @@ class Prompt < ApplicationRecord
         },
         anthropic: {
           models: [ "claude-3-5-sonnet-20240620", "claude-3-7-sonnet" ]
+        },
+        gemini: {
+          models: [ "gemini-2.5-pro", "gemini-2.5-flash", "gemini-3-pro-preview", "gemini-3-flash-preview" ]
         }
       },
       image_to_image: {
