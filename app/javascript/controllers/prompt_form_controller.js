@@ -101,12 +101,13 @@ export default class extends Controller {
     this.selectedProviderTarget.innerHTML = '<option value="">Select a provider</option>'
     
     if (endpointType === "Chat") {
-      // For Chat, offer Anthropic and OpenAI providers
+      // For Chat, offer Anthropic, OpenAI, and Gemini providers
       this.selectedProviderTarget.innerHTML += '<option value="Anthropic">Anthropic</option>'
       this.selectedProviderTarget.innerHTML += '<option value="Openai">OpenAI</option>'
-      
+      this.selectedProviderTarget.innerHTML += '<option value="Gemini">Gemini</option>'
+
       // Restore provider selection if valid
-      if (currentProvider === "Anthropic" || currentProvider === "Openai") {
+      if (currentProvider === "Anthropic" || currentProvider === "Openai" || currentProvider === "Gemini") {
         this.selectedProviderTarget.value = currentProvider
       }
       
