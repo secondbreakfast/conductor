@@ -48,7 +48,7 @@ class Prompt < ApplicationRecord
           models: [ "gpt-image-1", "dall-e-3", "dall-e-2" ]
         },
         gemini: {
-          models: [ "gemini-2.5-flash-image-preview" ]
+          models: [ "gemini-2.5-flash-image-preview", "gemini-3-pro-image-preview" ]
         },
         stability: {
           models: [ "replace_background_and_relight" ]
